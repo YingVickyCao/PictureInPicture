@@ -1,19 +1,22 @@
+# Android PictureInPicture Sample
 
-Android PictureInPicture Sample
-===============================
+Picture-in-picture Support  
+https://developer.android.google.cn/guide/topics/ui/picture-in-picture?hl=en
+
+Picture-in-picture Example  
+https://github.com/android/media-samples/tree/master/PictureInPicture/
 
 This sample demonstrates basic usage of Picture-in-Picture mode for handheld devices.
 The sample plays a video. The video keeps on playing when the app is turned in to
 Picture-in-Picture mode. On Picture-in-Picture screen, the app shows an action item to
 pause or resume the video.
 
-Introduction
-------------
+## Introduction
 
 As of Android O, activities can launch in [Picture-in-Picture (PiP)][1] mode. PiP is a
 special type of [multi-window][2] mode mostly used for video playback.
 
-The app is *paused* when it enters PiP mode, but it should continue showing content. For this
+The app is _paused_ when it enters PiP mode, but it should continue showing content. For this
 reason, you should make sure your app does not pause playback in its [onPause()][3]
 handler. Instead, you should pause video in [onStop()][4]. For more information, see [Multi-Window
 Lifecycle][5].
@@ -43,26 +46,22 @@ item is selected.
 [8]: https://developer.android.com/reference/android/app/Activity.html#setPictureInPictureParams(android.app.PictureInPictureParams)
 [9]: https://developer.android.com/reference/android/app/PendingIntent.html
 
-Pre-requisites
---------------
+## Pre-requisites
 
 - Android SDK 28
 - Android Build Tools v28.0.3
 - Android Support Repository
 
-Screenshots
--------------
+## Screenshots
 
-<img src="screenshots/1-main.png" height="400" alt="Screenshot"/> <img src="screenshots/2-pip.png" height="400" alt="Screenshot"/> 
+<img src="screenshots/1-main.png" height="400" alt="Screenshot"/> <img src="screenshots/2-pip.png" height="400" alt="Screenshot"/>
 
-Getting Started
----------------
+## Getting Started
 
 This sample uses the Gradle build system. To build this project, use the
 "gradlew build" command or use "Import Project" in Android Studio.
 
-Support
--------
+## Support
 
 - Stack Overflow: http://stackoverflow.com/questions/tagged/android
 
