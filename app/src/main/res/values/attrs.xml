@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
  Copyright 2017 The Android Open Source Project
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,9 +16,8 @@
 <resources>
 
     <declare-styleable name="MovieView">
-        <attr name="android:src"/>
-        <attr name="android:title"/>
-        <attr name="android:adjustViewBounds"/>
+        <attr name="android:src" />
+        <attr name="android:title" />
+        <attr name="android:adjustViewBounds" />
     </declare-styleable>
-
 </resources>
