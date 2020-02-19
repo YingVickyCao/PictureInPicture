@@ -24,7 +24,9 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Rational;
 import android.view.View;
 import android.widget.Button;
@@ -52,29 +54,32 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
 
     private MediaSessionCompat mSession;
 
-    /** The arguments to be used for Picture-in-Picture mode. */
-    private final PictureInPictureParams.Builder mPictureInPictureParamsBuilder =
-            new PictureInPictureParams.Builder();
+    /**
+     * The arguments to be used for Picture-in-Picture mode.
+     */
+    private final PictureInPictureParams.Builder mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
 
-    /** This shows the video. */
+    /**
+     * This shows the video.
+     */
     private MovieView mMovieView;
 
-    /** The bottom half of the screen; hidden on landscape */
+    /**
+     * The bottom half of the screen; hidden on landscape
+     */
     private ScrollView mScrollView;
 
-    private final View.OnClickListener mOnClickListener =
-            new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    switch (view.getId()) {
-                        case R.id.pip:
-                            minimize();
-                            break;
-                    }
-                }
-            };
+    private final View.OnClickListener mOnClickListener = view -> {
+        switch (view.getId()) {
+            case R.id.pip:
+                minimize();
+                break;
+        }
+    };
 
-    /** Callbacks from the {@link MovieView} showing the video playback. */
+    /**
+     * Callbacks from the {@link MovieView} showing the video playback.
+     */
     private MovieView.MovieListener mMovieListener =
             new MovieView.MovieListener() {
 
@@ -132,9 +137,7 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
 
     private void initializeMediaSession() {
         mSession = new MediaSessionCompat(this, TAG);
-        mSession.setFlags(
-                MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS
-                        | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mSession.setActive(true);
         MediaControllerCompat.setMediaController(this, mSession.getController());
 
@@ -202,7 +205,9 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
         }
     }
 
-    /** Enters Picture-in-Picture mode. */
+    /**
+     * Enters Picture-in-Picture mode.
+     */
     void minimize() {
         if (mMovieView == null) {
             return;
@@ -242,9 +247,9 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
     /**
      * Overloaded method that persists previously set media actions.
      *
-     * @param state The state of the video, e.g. playing, paused, etc.
+     * @param state    The state of the video, e.g. playing, paused, etc.
      * @param position The position of playback in the video.
-     * @param mediaId The media id related to the video in the media session.
+     * @param mediaId  The media id related to the video in the media session.
      */
     private void updatePlaybackState(
             @PlaybackStateCompat.State int state, int position, int mediaId) {

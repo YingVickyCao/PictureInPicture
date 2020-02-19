@@ -26,6 +26,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.DrawableRes;
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * The arguments to be used for Picture-in-Picture mode.
      */
-    private final PictureInPictureParams.Builder mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
+    private PictureInPictureParams.Builder mPictureInPictureParamsBuilder;
 
     /**
      * This shows the video.
@@ -142,6 +143,9 @@ public class MainActivity extends AppCompatActivity {
      * @param requestCode The request code for the {@link PendingIntent}.
      */
     void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
         final ArrayList<RemoteAction> actions = new ArrayList<>();
 
         // This is the PendingIntent that is invoked when a user clicks on the action item.
@@ -170,10 +174,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate: ");
 
         // Prepare string resources for Picture-in-Picture actions.
         mPlay = getString(R.string.play);
         mPause = getString(R.string.pause);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
+        }
 
         // View references
         mMovieView = findViewById(R.id.movie);
@@ -185,12 +194,44 @@ public class MainActivity extends AppCompatActivity {
 
         // Set up the video; it automatically starts.
         mMovieView.setMovieListener(mMovieListener);
-        findViewById(R.id.pip).setOnClickListener(v -> pip());
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            findViewById(R.id.pip).setVisibility(View.GONE);
+        } else {
+            findViewById(R.id.pip).setOnClickListener(v -> pip());
+        }
     }
 
     private void switchActivityOnClick(View view) {
         startActivity(new Intent(view.getContext(), MediaSessionPlaybackActivity.class));
         finish();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
+        if (!isInPictureInPictureMode()) {
+            // Show the video controls so the video can be easily resumed.
+            mMovieView.showControls();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
     }
 
     @Override
@@ -203,12 +244,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        if (!isInPictureInPictureMode()) {
-            // Show the video controls so the video can be easily resumed.
-            mMovieView.showControls();
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
     }
 
     @Override
@@ -270,6 +308,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void minimize() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
         if (mMovieView == null) {
             return;
         }
