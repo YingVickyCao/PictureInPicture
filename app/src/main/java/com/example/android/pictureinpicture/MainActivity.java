@@ -174,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate: ");
+        Log.e(TAG, "onCreate: ");
 
         // Prepare string resources for Picture-in-Picture actions.
         mPlay = getString(R.string.play);
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        Log.d(TAG, "onRestart: ");
+        Log.e(TAG, "onRestart: ");
         if (!isInPictureInPictureMode()) {
             // Show the video controls so the video can be easily resumed.
             mMovieView.showControls();
@@ -219,26 +219,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart: ");
+        Log.e(TAG, "onStart: ");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG, "onResume: ");
+        Log.e(TAG, "onResume: ");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause: ");
+        Log.e(TAG, "onPause: ");
     }
 
     @Override
     protected void onStop() {
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
-        Log.d(TAG, "onStop: ");
+        Log.e(TAG, "onStop: ");
         mMovieView.pause();
         super.onStop();
     }
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
+        Log.e(TAG, "onDestroy: ");
     }
 
     @Override
@@ -268,6 +268,7 @@ public class MainActivity extends AppCompatActivity {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, configuration);
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
+            Log.d(TAG, "onPictureInPictureModeChanged: true");
             mReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -290,6 +291,7 @@ public class MainActivity extends AppCompatActivity {
             };
             registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
         } else {
+            Log.d(TAG, "onPictureInPictureModeChanged: false");
             // We are out of PiP mode. We can stop receiving events from it.
             unregisterReceiver(mReceiver);
             mReceiver = null;
@@ -327,6 +329,7 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onUserLeaveHint() {
+        Log.e(TAG, "onUserLeaveHint: ");
         if (iWantToBeInPipModeNow()) {
             minimize();
         }
