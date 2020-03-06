@@ -28,15 +28,18 @@ import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-
-import androidx.annotation.DrawableRes;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.util.Log;
 import android.util.Rational;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ScrollView;
+
+import androidx.annotation.DrawableRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.example.android.pictureinpicture.widget.MovieView;
 
@@ -45,8 +48,8 @@ import java.util.ArrayList;
 /**
  * Demonstrates usage of Picture-in-Picture mode on phones and tablets.
  */
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "MainActivity";
+public class MovieFragment extends Fragment implements IPip {
+    public static final String TAG = "MovieFragment";
 
     /**
      * Intent action for media controls from Picture-in-Picture mode.
@@ -152,29 +155,29 @@ public class MainActivity extends AppCompatActivity {
         // You need to use distinct request codes for play and pause, or the PendingIntent won't
         // be properly updated.
         Intent tIntent = new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType);
-        final PendingIntent intent = PendingIntent.getBroadcast(MainActivity.this, requestCode, tIntent, 0);
-        final Icon icon = Icon.createWithResource(MainActivity.this, iconId);
+        final PendingIntent intent = PendingIntent.getBroadcast(MovieFragment.this.getActivity(), requestCode, tIntent, 0);
+        final Icon icon = Icon.createWithResource(MovieFragment.this.getActivity(), iconId);
         actions.add(new RemoteAction(icon, title, title, intent));
 
         // Another action item. This is a fixed action.
-        actions.add(new RemoteAction(Icon.createWithResource(MainActivity.this, R.drawable.ic_info_24dp),
+        actions.add(new RemoteAction(Icon.createWithResource(MovieFragment.this.getActivity(), R.drawable.ic_info_24dp),
                 getString(R.string.info),
                 getString(R.string.info_description),
-                PendingIntent.getActivity(MainActivity.this, REQUEST_INFO, new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.info_uri))), 0)));
+                PendingIntent.getActivity(MovieFragment.this.getActivity(), REQUEST_INFO, new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.info_uri))), 0)));
 
         mPictureInPictureParamsBuilder.setActions(actions);
 
         // This is how you can update action items (or aspect ratio) for Picture-in-Picture mode.
         // Note this call can happen even when the app is not in PiP mode. In that case, the
         // arguments will be used for at the next call of #enterPictureInPictureMode.
-        setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
+        getActivity().setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
     }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Log.e(TAG, "onCreate: ");
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_main, container, false);
+        Log.e(TAG, "onCreate:@" + hashCode());
 
         // Prepare string resources for Picture-in-Picture actions.
         mPlay = getString(R.string.play);
@@ -185,57 +188,57 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // View references
-        mMovieView = findViewById(R.id.movie);
-        mScrollView = findViewById(R.id.scroll);
+        mMovieView = view.findViewById(R.id.movie);
+        mScrollView = view.findViewById(R.id.scroll);
 
-        Button switchExampleButton = findViewById(R.id.switch_example);
+        Button switchExampleButton = view.findViewById(R.id.switch_example);
         switchExampleButton.setText(getString(R.string.switch_media_session));
         switchExampleButton.setOnClickListener(this::switchActivityOnClick);
 
         // Set up the video; it automatically starts.
         mMovieView.setMovieListener(mMovieListener);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            findViewById(R.id.pip).setVisibility(View.GONE);
+            view.findViewById(R.id.pip).setVisibility(View.GONE);
         } else {
-            findViewById(R.id.pip).setOnClickListener(v -> pip());
+            view.findViewById(R.id.pip).setOnClickListener(v -> pip());
         }
+        return view;
     }
 
     private void switchActivityOnClick(View view) {
         startActivity(new Intent(view.getContext(), MediaSessionPlaybackActivity.class));
-        finish();
+        getActivity().finish();
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    public void onRestart() {
         Log.e(TAG, "onRestart: ");
-        if (!isInPictureInPictureMode()) {
+        if (!getActivity().isInPictureInPictureMode()) {
             // Show the video controls so the video can be easily resumed.
             mMovieView.showControls();
         }
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart: ");
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         Log.e(TAG, "onResume: ");
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Log.e(TAG, "onPause: ");
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
         Log.e(TAG, "onStop: ");
@@ -244,7 +247,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: ");
     }
@@ -252,22 +255,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged: ");
+        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
         adjustFullScreen(newConfig);
     }
 
     @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        Log.d(TAG, "onWindowFocusChanged: hasFocus=" + hasFocus);
-        if (hasFocus) {
-            adjustFullScreen(getResources().getConfiguration());
-        }
-    }
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
 
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration configuration) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode, configuration);
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
             Log.d(TAG, "onPictureInPictureModeChanged: true");
@@ -291,11 +286,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             };
-            registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
+            getActivity().registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
         } else {
             Log.d(TAG, "onPictureInPictureModeChanged: false");
             // We are out of PiP mode. We can stop receiving events from it.
-            unregisterReceiver(mReceiver);
+            getActivity().unregisterReceiver(mReceiver);
             mReceiver = null;
             // Show the video controls if the video is not playing
             if (mMovieView != null && !mMovieView.isPlaying()) {
@@ -324,14 +319,14 @@ public class MainActivity extends AppCompatActivity {
         // Calculate the aspect ratio of the PiP screen.
         Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
         mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
-        enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
+        getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
     }
 
     /**
      * Press Home or Recent -> Enters Picture-in-Picture mode.
      */
     @Override
-    protected void onUserLeaveHint() {
+    public void onUserLeaveHint() {
         Log.e(TAG, "onUserLeaveHint: ");
         if (iWantToBeInPipModeNow()) {
             minimize();
@@ -348,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
      * @param config The current {@link Configuration}.
      */
     private void adjustFullScreen(Configuration config) {
-        final View decorView = getWindow().getDecorView();
+        final View decorView = getActivity().getWindow().getDecorView();
         if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
