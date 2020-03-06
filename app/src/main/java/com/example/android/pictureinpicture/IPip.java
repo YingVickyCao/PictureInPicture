@@ -4,4 +4,6 @@ public interface IPip {
     void onRestart();
 
     void onUserLeaveHint();
+
+    void onWindowFocusChanged(boolean hasFocus);
 }

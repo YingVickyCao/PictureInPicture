@@ -260,6 +260,13 @@ public class MovieFragment extends Fragment implements IPip {
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        if (hasFocus) {
+            adjustFullScreen(getResources().getConfiguration());
+        }
+    }
+
+    @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
 
@@ -316,6 +323,7 @@ public class MovieFragment extends Fragment implements IPip {
         }
         // Hide the controls in picture-in-picture mode.
         mMovieView.hideControls();
+        mScrollView.setVisibility(View.GONE);
         // Calculate the aspect ratio of the PiP screen.
         Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
         mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();

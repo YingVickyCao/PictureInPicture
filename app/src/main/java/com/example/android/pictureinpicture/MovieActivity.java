@@ -73,4 +73,14 @@ public class MovieActivity extends AppCompatActivity {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode);
     }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        Log.d(TAG, "onWindowFocusChanged: hasFocus=" + hasFocus);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.activity_main);
+        if (fragment instanceof IPip) {
+            ((IPip) fragment).onWindowFocusChanged(hasFocus);
+        }
+    }
 }
