@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;

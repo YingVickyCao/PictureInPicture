@@ -32,7 +32,7 @@ public class MovieActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
-        setContentView(R.layout.activity_main2);
+        setContentView(R.layout.activity_movie);
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, new MovieFragment(), MovieFragment.TAG).commit();
     }
 
@@ -59,7 +59,7 @@ public class MovieActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged: newConfig=" + newConfig.orientation);
+//        Log.d(TAG, "onConfigurationChanged: newConfig=" + newConfig.orientation);
     }
 
     @Override
@@ -68,11 +68,11 @@ public class MovieActivity extends AppCompatActivity {
         Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode + ",newConfig=" + newConfig.orientation);
     }
 
-    @Override
-    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
-        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
-        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode);
-    }
+//    @Override
+//    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+//        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+//        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode);
+//    }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {

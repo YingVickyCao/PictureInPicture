@@ -173,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.movie_layout);
         Log.e(TAG, "onCreate: ");
 
         // Prepare string resources for Picture-in-Picture actions.

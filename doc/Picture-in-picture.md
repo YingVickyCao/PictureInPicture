@@ -68,21 +68,34 @@ onStart
 onResume
 ```
 
-# QA：Tablet Landscape，横屏 <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。
-
-Tablet Landscape:
+# QA：Tablet Landscape <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。
 
 ```
+Tablet Landscape:
+
 MovieFragment: onUserLeaveHint:
 MovieFragment: minimize:
 MovieFragment: onPause:
-MovieFragment: onConfigurationChanged:
+MovieFragment: onConfigurationChanged: isInPictureInPictureMode=true// first
 MovieActivity: onConfigurationChanged: newConfig=2
 MovieFragment: onPictureInPictureModeChanged: true
 MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true
 MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true,newConfig=2
-MovieFragment: onConfigurationChanged:
+MovieFragment: onConfigurationChanged:isInPictureInPictureMode=true // second
 MovieActivity: onConfigurationChanged: newConfig=2
+```
+
+```
+Tablet portrait:
+
+MovieFragment: onUserLeaveHint:
+MovieFragment: minimize:
+MovieFragment: onPause:
+MovieActivity: onWindowFocusChanged: hasFocus=false
+MovieFragment: onPictureInPictureModeChanged: isInPictureInPictureMode=true
+MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true,newConfig=1
+MovieFragment: adjustFullScreen: ORIENTATION_LANDSCAPE
+MovieFragment: onConfigurationChanged: 2      // first
 ```
 
 解决：使用 getActivity().isInPictureInPictureMode()) 判断

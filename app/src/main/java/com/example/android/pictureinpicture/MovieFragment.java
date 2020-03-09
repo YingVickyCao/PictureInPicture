@@ -109,6 +109,7 @@ public class MovieFragment extends Fragment implements IPip {
     private String mPlay;
     private String mPause;
 
+    private View mCloseBtn;
     /**
      * Callbacks from the {@link MovieView} showing the video playback.
      */
@@ -176,7 +177,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_main, container, false);
+        View view = inflater.inflate(R.layout.movie_layout2, container, false);
         Log.e(TAG, "onCreate:@" + hashCode());
 
         // Prepare string resources for Picture-in-Picture actions.
@@ -190,6 +191,7 @@ public class MovieFragment extends Fragment implements IPip {
         // View references
         mMovieView = view.findViewById(R.id.movie);
         mScrollView = view.findViewById(R.id.scroll);
+        mCloseBtn = view.findViewById(R.id.close);
 
         Button switchExampleButton = view.findViewById(R.id.switch_example);
         switchExampleButton.setText(getString(R.string.switch_media_session));
@@ -255,8 +257,21 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
-        adjustFullScreen(newConfig);
+        if (null == getActivity()) {
+            return;
+        }
+
+//        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
+//        Log.d(TAG, "onConfigurationChanged:" + newConfig.toString());
+        if (getActivity().isInPictureInPictureMode()) {
+//            if (!isPIPModeInvoked) {
+//                isPIPModeInvoked = true;
+            adjustFullScreen(newConfig);
+            Log.d(TAG, "onConfigurationChanged: " + newConfig.orientation);
+//            }
+        } else {
+//            isPIPModeInvoked = false;
+        }
     }
 
     @Override
@@ -269,10 +284,10 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode);
 
         if (isInPictureInPictureMode) {
             // Starts receiving events from action items in PiP mode.
-            Log.d(TAG, "onPictureInPictureModeChanged: true");
             mReceiver = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -295,7 +310,9 @@ public class MovieFragment extends Fragment implements IPip {
             };
             getActivity().registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
         } else {
-            Log.d(TAG, "onPictureInPictureModeChanged: false");
+            if (null == mReceiver) {
+                return;
+            }
             // We are out of PiP mode. We can stop receiving events from it.
             getActivity().unregisterReceiver(mReceiver);
             mReceiver = null;
@@ -324,6 +341,7 @@ public class MovieFragment extends Fragment implements IPip {
         // Hide the controls in picture-in-picture mode.
         mMovieView.hideControls();
         mScrollView.setVisibility(View.GONE);
+        mCloseBtn.setVisibility(View.GONE);
         // Calculate the aspect ratio of the PiP screen.
         Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
         mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
@@ -356,11 +374,13 @@ public class MovieFragment extends Fragment implements IPip {
             Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             mScrollView.setVisibility(View.GONE);
+            mCloseBtn.setVisibility(View.GONE);
             mMovieView.setAdjustViewBounds(false);
         } else {
             Log.d(TAG, "adjustFullScreen: ORIENTATION_PORTRAIT");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             mScrollView.setVisibility(View.VISIBLE);
+            mCloseBtn.setVisibility(View.VISIBLE);
             mMovieView.setAdjustViewBounds(true);
         }
     }
