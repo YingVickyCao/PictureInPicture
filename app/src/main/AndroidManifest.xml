@@ -26,7 +26,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name=".FirstActivity">
+        <activity android:name="._2.FirstActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -34,17 +34,18 @@
         </activity>
 
         <activity
-            android:name=".MovieActivity"
+            android:name="._2.MovieActivity"
+            android:autoRemoveFromRecents="true"
             android:configChanges="screenSize|orientation|keyboardHidden|smallestScreenSize|screenLayout"
             android:supportsPictureInPicture="true" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="._origin.MainActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:supportsPictureInPicture="true" />
 
         <activity
-            android:name=".MediaSessionPlaybackActivity"
+            android:name="._origin.MediaSessionPlaybackActivity"
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:supportsPictureInPicture="true" />
     </application>

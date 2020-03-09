@@ -20,7 +20,7 @@
     android:layout_height="match_parent"
     android:background="@android:color/background_dark"
     android:orientation="vertical"
-    tools:context="com.example.android.pictureinpicture.MainActivity">
+    tools:context="com.example.android.pictureinpicture._origin.MainActivity">
 
     <com.example.android.pictureinpicture.widget.MovieView
         android:id="@+id/movie"

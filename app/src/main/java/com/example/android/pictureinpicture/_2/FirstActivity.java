@@ -1,4 +1,4 @@
-package com.example.android.pictureinpicture;
+package com.example.android.pictureinpicture._2;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
+
+import com.example.android.pictureinpicture.R;
 
 public class FirstActivity extends Activity {
     private static final String TAG = FirstActivity.class.getSimpleName();

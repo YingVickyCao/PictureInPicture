@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.pictureinpicture;
+package com.example.android.pictureinpicture._2;
 
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
@@ -41,6 +41,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.example.android.pictureinpicture.R;
+import com.example.android.pictureinpicture._origin.MediaSessionPlaybackActivity;
 import com.example.android.pictureinpicture.widget.MovieView;
 
 import java.util.ArrayList;
@@ -192,6 +194,7 @@ public class MovieFragment extends Fragment implements IPip {
         mMovieView = view.findViewById(R.id.movie);
         mScrollView = view.findViewById(R.id.scroll);
         mCloseBtn = view.findViewById(R.id.close);
+        mCloseBtn.setOnClickListener(v -> clickClose());
 
         Button switchExampleButton = view.findViewById(R.id.switch_example);
         switchExampleButton.setText(getString(R.string.switch_media_session));
@@ -205,6 +208,11 @@ public class MovieFragment extends Fragment implements IPip {
             view.findViewById(R.id.pip).setOnClickListener(v -> pip());
         }
         return view;
+    }
+
+    private void clickClose() {
+        mMovieView.pause();
+        getActivity().finish();
     }
 
     private void switchActivityOnClick(View view) {

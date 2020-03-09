@@ -26,6 +26,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.view.View;
 
+import com.example.android.pictureinpicture._origin.MediaSessionPlaybackActivity;
 import com.example.android.pictureinpicture.widget.MovieView;
 
 import org.hamcrest.Description;

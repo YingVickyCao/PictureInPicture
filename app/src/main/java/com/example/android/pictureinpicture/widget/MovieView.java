@@ -225,7 +225,6 @@ public class MovieView extends RelativeLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.d(TAG, "onMeasure1: width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
         if (mMediaPlayer != null) {
             final int videoWidth = mMediaPlayer.getVideoWidth();
             final int videoHeight = mMediaPlayer.getVideoHeight();
@@ -259,7 +258,6 @@ public class MovieView extends RelativeLayout {
             }
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        Log.d(TAG, "onMeasure2: width=" + getMeasuredWidth() + ",height=" + getMeasuredHeight());
     }
 
     @Override

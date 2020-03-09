@@ -68,7 +68,7 @@ onStart
 onResume
 ```
 
-# QA：Tablet Landscape <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。
+# 3 QA：Tablet Landscape <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。
 
 ```
 Tablet Landscape:
@@ -113,7 +113,13 @@ MovieFragment: onConfigurationChanged: 2      // first
     }
 ```
 
-# QA: Can support other color icon instead of white icon ?
+# 4 QA: Can support other color icon instead of white icon ?
 
 Only support white.  
 If set not white icon, displayed as white icon,too.
+
+# 5 QA: Activity is still in Recent after invoked onDestroy()?
+
+Q : First Activity -> MovieActivity, MovieActivity=> PIP Mode => MovieActivity, Click Close button to destroy MovieActivity. but MovieActivity is still in Recent after invoked onDestroy().
+
+A : `android:autoRemoveFromRecents="true"`

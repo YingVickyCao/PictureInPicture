@@ -37,6 +37,7 @@ import androidx.test.rule.ActivityTestRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import android.view.View;
 
+import com.example.android.pictureinpicture._origin.MainActivity;
 import com.example.android.pictureinpicture.widget.MovieView;
 
 import org.hamcrest.Description;

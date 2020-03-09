@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.pictureinpicture;
+package com.example.android.pictureinpicture._2;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -24,6 +24,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+
+import com.example.android.pictureinpicture.R;
 
 public class MovieActivity extends AppCompatActivity {
     private static final String TAG = MovieActivity.class.getSimpleName();
@@ -44,6 +46,38 @@ public class MovieActivity extends AppCompatActivity {
         if (fragment instanceof IPip) {
             ((IPip) fragment).onRestart();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.e(TAG, "onStart: ");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.e(TAG, "onResume: ");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.e(TAG, "onPause: ");
+    }
+
+    @Override
+    protected void onStop() {
+        // On entering Picture-in-Picture mode, onPause is called, but not onStop.
+        // For this reason, this is the place where we should pause the video playback.
+        Log.e(TAG, "onStop: ");
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.e(TAG, "onDestroy: ");
     }
 
     @Override

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.android.pictureinpicture;
+package com.example.android.pictureinpicture._origin;
 
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
@@ -38,6 +38,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 
+import com.example.android.pictureinpicture.R;
 import com.example.android.pictureinpicture.widget.MovieView;
 
 import java.util.ArrayList;
