@@ -113,13 +113,16 @@ MovieFragment: onConfigurationChanged: 2      // first
     }
 ```
 
-# 4 QA: Can support other color icon instead of white icon ?
+# 4 Q: Can support other color icon instead of white icon ?
 
-Only support white.  
+A : Only support white.  
 If set not white icon, displayed as white icon,too.
 
-# 5 QA: Activity is still in Recent after invoked onDestroy()?
+# 5 Q: Activity is still in Recent after invoked onDestroy()?
 
-Q : First Activity -> MovieActivity, MovieActivity=> PIP Mode => MovieActivity, Click Close button to destroy MovieActivity. but MovieActivity is still in Recent after invoked onDestroy().
+How to reproduce?  
+First Activity -> MovieActivity.  
+MovieActivity=> PIP Mode => MovieActivity, Click Close button to destroy MovieActivity.  
+but MovieActivity is still in Recent after invoked onDestroy().
 
 A : `android:autoRemoveFromRecents="true"`
