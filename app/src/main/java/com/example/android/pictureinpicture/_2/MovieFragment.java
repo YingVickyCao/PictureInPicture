@@ -272,13 +272,10 @@ public class MovieFragment extends Fragment implements IPip {
 //        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
 //        Log.d(TAG, "onConfigurationChanged:" + newConfig.toString());
         if (getActivity().isInPictureInPictureMode()) {
-//            if (!isPIPModeInvoked) {
-//                isPIPModeInvoked = true;
             adjustFullScreen(newConfig);
             Log.d(TAG, "onConfigurationChanged: " + newConfig.orientation);
 //            }
         } else {
-//            isPIPModeInvoked = false;
         }
     }
 
