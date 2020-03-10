@@ -267,7 +267,12 @@ public class MovieFragment extends Fragment implements IPip {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode);
 
-        if (null == getActivity() || !getActivity().isInPictureInPictureMode()) {
+//        if (isInPictureInPictureMode) {
+//            registerMediaReceiver();
+//        } else {
+//            unregisterReceiver();
+//        }
+        if (!isInPictureInPictureMode) {
             // Show the video controls if the video is not playing
             if (mMovieView != null && !mMovieView.isPlaying()) {
                 mMovieView.showControls();
