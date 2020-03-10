@@ -1,8 +1,6 @@
 package com.example.android.pictureinpicture._2;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,15 +30,5 @@ public class FirstActivity extends Activity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "onDestroy: ");
-    }
-
-    public void AppExit(Context context) {
-        try {
-            ActivityManager activityMgr = (ActivityManager) context
-                    .getSystemService(Context.ACTIVITY_SERVICE);
-            activityMgr.killBackgroundProcesses(context.getPackageName());
-            System.exit(0);
-        } catch (Exception ignored) {
-        }
     }
 }

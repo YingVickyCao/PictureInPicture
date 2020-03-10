@@ -274,7 +274,6 @@ public class MovieFragment extends Fragment implements IPip {
         if (getActivity().isInPictureInPictureMode()) {
             adjustFullScreen(newConfig);
             Log.d(TAG, "onConfigurationChanged: " + newConfig.orientation);
-//            }
         } else {
         }
     }
