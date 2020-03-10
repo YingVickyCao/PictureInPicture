@@ -1,10 +1,14 @@
 # Picture In Picture
 
-画中画：
+How to 画中画：  
+Android >=8.0（26）（本文讨论）  
+Android <8.0: 低版本实现画中画还是需要利用 windowManger 通过 addview 去做
 
-- Android >=8.0（26）（本文讨论）  
-  内置操作：手势移动、关闭画中画、画中画切换回原页面
-- 低版本实现画中画还是需要利用 windowManger 通过 addview 去做
+画中画
+
+- 内置操作：手势移动、关闭画中画、画中画切换回原页面
+- PIP is single instance in phone.  
+  If 其他 app 使用 PIP， 覆盖。
 
 # 1 Source
 
