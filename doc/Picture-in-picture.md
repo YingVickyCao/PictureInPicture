@@ -126,3 +126,53 @@ MovieActivity=> PIP Mode => MovieActivity, Click Close button to destroy MovieAc
 but MovieActivity is still in Recent after invoked onDestroy().
 
 A : `android:autoRemoveFromRecents="true"`
+
+# 6 Q: Media Service is still playing music after app is killed by swiped from Recents?
+
+A:
+
+- Way 1:
+
+```xml
+<service
+android:stopWithTask="true"/>
+```
+
+- Way 2:
+
+```xml
+<service
+android:stopWithTask="false"/>
+```
+
+```java
+// Service
+
+// Only if android:stopWithTask="false", onTaskRemoved can be invoked.
+@Override
+public void onTaskRemoved(Intent rootIntent) {
+  super.onTaskRemoved(rootIntent);
+  // Do clear task
+}
+```
+
+# 7 Q: PIP Mode showes many views?
+
+A:  
+In Activity / Fragment `onConfigurationChanged(@NonNull Configuration newConfig)`, hide/show views?
+
+```java
+// Fragment
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+  super.onConfigurationChanged(newConfig);
+  if (null == getActivity()) {
+      return;
+  }
+  if (getActivity().isInPictureInPictureMode()) {
+    // hide no used views in PIP Mode.
+  } else {
+  // Show views in Video Page
+  }
+}
+```
