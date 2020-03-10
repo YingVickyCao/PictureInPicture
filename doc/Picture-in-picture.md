@@ -180,3 +180,29 @@ public void onConfigurationChanged(Configuration newConfig) {
   }
 }
 ```
+
+# 8 Q: When press Home or Recents, go to PIP mode?
+
+A:
+Way 1 : Press Home or Recents
+
+```java
+@Override
+public void onUserLeaveHint() {
+    Log.e(TAG, "onUserLeaveHint: ");
+    pip();
+}
+```
+
+Way 2 : Only press Home
+
+```
+// Use BroadcastReceiver
+// Press Recents
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS
+onReceive: reason=recentapps
+
+// Press Home
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS
+onReceive: reason=homekey
+```

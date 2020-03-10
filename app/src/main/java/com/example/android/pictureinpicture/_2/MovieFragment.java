@@ -28,6 +28,7 @@ import android.graphics.drawable.Icon;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Rational;
 import android.view.LayoutInflater;
@@ -112,69 +113,6 @@ public class MovieFragment extends Fragment implements IPip {
     private String mPause;
 
     private View mCloseBtn;
-    /**
-     * Callbacks from the {@link MovieView} showing the video playback.
-     */
-    private MovieView.MovieListener mMovieListener = new MovieView.MovieListener() {
-
-        @Override
-        public void onMovieStarted() {
-            // We are playing the video now. In PiP mode, we want to show an action item to
-            // pause
-            // the video.
-            updatePictureInPictureActions(R.drawable.ic_pause_24dp, mPause, CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
-        }
-
-        @Override
-        public void onMovieStopped() {
-            // The video stopped or reached its end. In PiP mode, we want to show an action
-            // item to play the video.
-            updatePictureInPictureActions(R.drawable.ic_play_arrow_24dp, mPlay, CONTROL_TYPE_PLAY, REQUEST_PLAY);
-        }
-
-        @Override
-        public void onMovieMinimized() {
-            // The MovieView wants us to minimize it. We enter Picture-in-Picture mode now.
-            minimize();
-        }
-    };
-
-    /**
-     * Update the state of pause/resume action item in Picture-in-Picture mode.
-     *
-     * @param iconId      The icon to be used.
-     * @param title       The title text.
-     * @param controlType The type of the action. either {@link #CONTROL_TYPE_PLAY} or {@link
-     *                    #CONTROL_TYPE_PAUSE}.
-     * @param requestCode The request code for the {@link PendingIntent}.
-     */
-    void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            return;
-        }
-        final ArrayList<RemoteAction> actions = new ArrayList<>();
-
-        // This is the PendingIntent that is invoked when a user clicks on the action item.
-        // You need to use distinct request codes for play and pause, or the PendingIntent won't
-        // be properly updated.
-        Intent tIntent = new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType);
-        final PendingIntent intent = PendingIntent.getBroadcast(MovieFragment.this.getActivity(), requestCode, tIntent, 0);
-        final Icon icon = Icon.createWithResource(MovieFragment.this.getActivity(), iconId);
-        actions.add(new RemoteAction(icon, title, title, intent));
-
-        // Another action item. This is a fixed action.
-        actions.add(new RemoteAction(Icon.createWithResource(MovieFragment.this.getActivity(), R.drawable.ic_info_24dp),
-                getString(R.string.info),
-                getString(R.string.info_description),
-                PendingIntent.getActivity(MovieFragment.this.getActivity(), REQUEST_INFO, new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.info_uri))), 0)));
-
-        mPictureInPictureParamsBuilder.setActions(actions);
-
-        // This is how you can update action items (or aspect ratio) for Picture-in-Picture mode.
-        // Note this call can happen even when the app is not in PiP mode. In that case, the
-        // arguments will be used for at the next call of #enterPictureInPictureMode.
-        getActivity().setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
-    }
 
     @Nullable
     @Override
@@ -233,6 +171,7 @@ public class MovieFragment extends Fragment implements IPip {
     public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart: ");
+        registerMediaReceiver();
     }
 
     @Override
@@ -253,7 +192,13 @@ public class MovieFragment extends Fragment implements IPip {
         // For this reason, this is the place where we should pause the video playback.
         Log.e(TAG, "onStop: ");
         mMovieView.pause();
+        unregisterReceiver();
         super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
     }
 
     @Override
@@ -265,24 +210,56 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        if (null == getActivity()) {
-            return;
-        }
-
-//        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
-//        Log.d(TAG, "onConfigurationChanged:" + newConfig.toString());
-        if (getActivity().isInPictureInPictureMode()) {
-            adjustFullScreen(newConfig);
-            Log.d(TAG, "onConfigurationChanged: " + newConfig.orientation);
-        } else {
-        }
+//       Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() );
+        adjustFullScreen(newConfig);
     }
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (hasFocus) {
+            Log.d(TAG, "onWindowFocusChanged: ");
             adjustFullScreen(getResources().getConfiguration());
         }
+    }
+
+    private void registerMediaReceiver() {
+        // Starts receiving events from action items in PiP mode.
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                final String SYSTEM_REASON = "reason";
+                final String SYSTEM_HOME_KEY = "homekey";
+                final String SYSTEM_RECENT_KEY = "recentapps";
+
+                if (null == intent) {
+                    return;
+                }
+                Log.d(TAG, "onReceive: action=" + intent.getAction());
+                if (ACTION_MEDIA_CONTROL.equals(intent.getAction())) {
+                    if (null != getActivity() && getActivity().isInPictureInPictureMode()) {
+                        final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
+                        switch (controlType) {
+                            case CONTROL_TYPE_PLAY:
+                                mMovieView.play();
+                                break;
+                            case CONTROL_TYPE_PAUSE:
+                                mMovieView.pause();
+                                break;
+                        }
+                    }
+                } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(intent.getAction())) {
+                    String reason = intent.getStringExtra(SYSTEM_REASON);
+                    Log.d(TAG, "onReceive: reason=" + reason);
+                    if (TextUtils.equals(reason, SYSTEM_HOME_KEY)) { // Press Home
+                        pressHome();
+                    } else if (TextUtils.equals(reason, SYSTEM_RECENT_KEY)) {  // Press Recents
+                    }
+                }
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter(ACTION_MEDIA_CONTROL);
+        intentFilter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        getActivity().registerReceiver(mReceiver, intentFilter);
     }
 
     @Override
@@ -290,40 +267,19 @@ public class MovieFragment extends Fragment implements IPip {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode);
 
-        if (isInPictureInPictureMode) {
-            // Starts receiving events from action items in PiP mode.
-            mReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                    if (intent == null || !ACTION_MEDIA_CONTROL.equals(intent.getAction())) {
-                        return;
-                    }
-
-                    // This is where we are called back from Picture-in-Picture action
-                    // items.
-                    final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
-                    switch (controlType) {
-                        case CONTROL_TYPE_PLAY:
-                            mMovieView.play();
-                            break;
-                        case CONTROL_TYPE_PAUSE:
-                            mMovieView.pause();
-                            break;
-                    }
-                }
-            };
-            getActivity().registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
-        } else {
-            if (null == mReceiver) {
-                return;
-            }
-            // We are out of PiP mode. We can stop receiving events from it.
-            getActivity().unregisterReceiver(mReceiver);
-            mReceiver = null;
+        if (null == getActivity() || !getActivity().isInPictureInPictureMode()) {
             // Show the video controls if the video is not playing
             if (mMovieView != null && !mMovieView.isPlaying()) {
                 mMovieView.showControls();
             }
+        }
+    }
+
+    private void unregisterReceiver() {
+        if (null != mReceiver) {
+            // We are out of PiP mode. We can stop receiving events from it.
+            getActivity().unregisterReceiver(mReceiver);
+            mReceiver = null;
         }
     }
 
@@ -359,12 +315,16 @@ public class MovieFragment extends Fragment implements IPip {
     public void onUserLeaveHint() {
         Log.e(TAG, "onUserLeaveHint: ");
         if (iWantToBeInPipModeNow()) {
-            minimize();
+            pip();
         }
     }
 
+    private void pressHome() {
+        pip();
+    }
+
     private boolean iWantToBeInPipModeNow() {
-        return true;
+        return false;
     }
 
     /**
@@ -387,5 +347,69 @@ public class MovieFragment extends Fragment implements IPip {
             mCloseBtn.setVisibility(View.VISIBLE);
             mMovieView.setAdjustViewBounds(true);
         }
+    }
+
+    /**
+     * Callbacks from the {@link MovieView} showing the video playback.
+     */
+    private MovieView.MovieListener mMovieListener = new MovieView.MovieListener() {
+
+        @Override
+        public void onMovieStarted() {
+            // We are playing the video now. In PiP mode, we want to show an action item to
+            // pause
+            // the video.
+            updatePictureInPictureActions(R.drawable.ic_pause_24dp, mPause, CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+        }
+
+        @Override
+        public void onMovieStopped() {
+            // The video stopped or reached its end. In PiP mode, we want to show an action
+            // item to play the video.
+            updatePictureInPictureActions(R.drawable.ic_play_arrow_24dp, mPlay, CONTROL_TYPE_PLAY, REQUEST_PLAY);
+        }
+
+        @Override
+        public void onMovieMinimized() {
+            // The MovieView wants us to minimize it. We enter Picture-in-Picture mode now.
+            pip();
+        }
+    };
+
+    /**
+     * Update the state of pause/resume action item in Picture-in-Picture mode.
+     *
+     * @param iconId      The icon to be used.
+     * @param title       The title text.
+     * @param controlType The type of the action. either {@link #CONTROL_TYPE_PLAY} or {@link
+     *                    #CONTROL_TYPE_PAUSE}.
+     * @param requestCode The request code for the {@link PendingIntent}.
+     */
+    void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            return;
+        }
+        final ArrayList<RemoteAction> actions = new ArrayList<>();
+
+        // This is the PendingIntent that is invoked when a user clicks on the action item.
+        // You need to use distinct request codes for play and pause, or the PendingIntent won't
+        // be properly updated.
+        Intent tIntent = new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType);
+        final PendingIntent intent = PendingIntent.getBroadcast(MovieFragment.this.getActivity(), requestCode, tIntent, 0);
+        final Icon icon = Icon.createWithResource(MovieFragment.this.getActivity(), iconId);
+        actions.add(new RemoteAction(icon, title, title, intent));
+
+        // Another action item. This is a fixed action.
+        actions.add(new RemoteAction(Icon.createWithResource(MovieFragment.this.getActivity(), R.drawable.ic_info_24dp),
+                getString(R.string.info),
+                getString(R.string.info_description),
+                PendingIntent.getActivity(MovieFragment.this.getActivity(), REQUEST_INFO, new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.info_uri))), 0)));
+
+        mPictureInPictureParamsBuilder.setActions(actions);
+
+        // This is how you can update action items (or aspect ratio) for Picture-in-Picture mode.
+        // Note this call can happen even when the app is not in PiP mode. In that case, the
+        // arguments will be used for at the next call of #enterPictureInPictureMode.
+        getActivity().setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
     }
 }
