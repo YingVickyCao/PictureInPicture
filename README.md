@@ -46,7 +46,7 @@ onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=normal
 onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
 
 // Out PIP
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE  // Touch PIP
 onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
 onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
 onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
@@ -71,6 +71,57 @@ onRestart: isInPictureInPictureMode=false
 onStart: isInPictureInPictureMode=false
 onResume: isInPictureInPictureMode=false
 onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+
+// Close MovieFragment and it's activity
+onPause: isInPictureInPictureMode=false
+onStop: isInPictureInPictureMode=false
+onDestroyView: isInPictureInPictureMode=false
+onDestroy: isInPictureInPictureMode=false
+```
+
+- Phone is landscape
+
+```
+MovieFragment.java, Phone is landscape
+
+onCreateView: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
+
+// Enter PIP (Press Home/Recent)
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
+minimize
+onUserLeaveHint
+onPause: isInPictureInPictureMode=true
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=normal
+
+// Out PIP
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onResume: isInPictureInPictureMode=false
+
+// Enter PIP (Click button)
+minimize:
+onPause: isInPictureInPictureMode=true
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=normal
+
+// In PIP, click X
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onStop: isInPictureInPictureMode=false
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+
+// Pickup activity from Recents
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onRestart: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
 
 // Close MovieFragment and it's activity
 onPause: isInPictureInPictureMode=false

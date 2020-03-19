@@ -286,7 +286,7 @@ public class MovieFragment extends Fragment implements IPip {
                     }
                 } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(intent.getAction())) {
                     String reason = intent.getStringExtra(SYSTEM_REASON);
-                    Log.d(TAG, "onReceive: action=" + intent.getAction() + "reason=" + reason);
+                    Log.d(TAG, "onReceive: action=" + intent.getAction() + ",reason=" + reason);
                     if (TextUtils.equals(reason, SYSTEM_HOME_KEY)) { // Press Home
                         pressHome();
                     } else if (TextUtils.equals(reason, SYSTEM_RECENT_KEY)) {  // Press Recents
