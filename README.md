@@ -27,6 +27,9 @@ android:supportsPictureInPicture="true"
 
 # 2 Log
 
+Phone = Android 10 Google Pixel 3  
+Tablet = Androd 9 SamSung SM-T830
+
 ## Phone is portrait
 
 ```
