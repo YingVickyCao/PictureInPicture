@@ -27,55 +27,56 @@ android:supportsPictureInPicture="true"
 
 # 2 Log
 
-```
-onCreate
-onStart
-onResume
-
-// Click button ->  Enter Picture-in-Picture mode.
-onPause
-onPictureInPictureModeChanged
-
-// Click button  -> Exist Picture-in-Picture mode. Back to page
-onPictureInPictureModeChanged
-onResume
-
-// Click button ->  Enter Picture-in-Picture mode.
-onPause
-onPictureInPictureModeChanged
-
-// In Picture-in-Picture mode, click Close button
-onStop
-onPictureInPictureModeChanged
-onRestart
-onStart
-onResume
-```
+- Phone is porttrait
 
 ```
-onCreate
-onStart
-onResume
+MovieFragment.java, Phone is porttrait
 
-// Press Home/Reccent -> Enter Picture-in-Picture mode.
+onCreateView: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+
+// Enter PIP (Press Home/Recent)
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
+minimize
 onUserLeaveHint
-onPause
-onPictureInPictureModeChanged true
+onPause: isInPictureInPictureMode=true
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
 
-// Click button  -> Exist Picture-in-Picture mode. Back to page
-onPictureInPictureModeChanged false
-onResume
+// Out PIP
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+onResume: isInPictureInPictureMode=false
 
-// Click button ->  Enter Picture-in-Picture mode.
-onPause
-onPictureInPictureModeChanged true
 
-// In Picture-in-Picture mode, click Close button
-onStop
-onPictureInPictureModeChanged false
-onRestart
-onStart
-onResume
+// Enter PIP (Click button)
+minimize:
+onPause: isInPictureInPictureMode=true
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+
+
+// In PIP, click X
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onStop: isInPictureInPictureMode=false
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+
+// Pickup activity from Recents
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onRestart: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+
+// Close MovieFragment and it's activity
+onPause: isInPictureInPictureMode=false
+onStop: isInPictureInPictureMode=false
+onDestroyView: isInPictureInPictureMode=false
+onDestroy: isInPictureInPictureMode=false
 ```
 
 # 3 QA：Tablet Landscape <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。

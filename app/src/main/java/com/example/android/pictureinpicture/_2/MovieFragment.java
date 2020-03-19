@@ -49,6 +49,10 @@ import com.example.android.pictureinpicture.widget.MovieView;
 
 import java.util.ArrayList;
 
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
+import static android.content.res.Configuration.ORIENTATION_UNDEFINED;
+
 /**
  * Demonstrates usage of Picture-in-Picture mode on phones and tablets.
  */
@@ -120,7 +124,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movie_layout2, container, false);
-        Log.e(TAG, "onCreate:@" + hashCode());
+        Log.e(TAG, "onCreateView: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
 
         // Prepare string resources for Picture-in-Picture actions.
         mPlay = getString(R.string.play);
@@ -170,7 +174,7 @@ public class MovieFragment extends Fragment implements IPip {
 
     @Override
     public void onRestart() {
-        Log.e(TAG, "onRestart: ");
+        Log.e(TAG, "onRestart: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
         if (!getActivity().isInPictureInPictureMode()) {
             // Show the video controls so the video can be easily resumed.
             mMovieView.showControls();
@@ -180,7 +184,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onStart() {
         super.onStart();
-        Log.e(TAG, "onStart: ");
+        Log.e(TAG, "onStart: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
         if (isSupportPIP()) {
             registerMediaReceiver();
         }
@@ -189,20 +193,20 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume: ");
+        Log.e(TAG, "onResume: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        Log.e(TAG, "onPause: ");
+        Log.e(TAG, "onPause: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
     }
 
     @Override
     public void onStop() {
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
-        Log.e(TAG, "onStop: ");
+        Log.e(TAG, "onStop: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
         mMovieView.pause();
 
         if (isSupportPIP()) {
@@ -214,25 +218,41 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Log.e(TAG, "onDestroyView: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "onDestroy: ");
+        Log.e(TAG, "onDestroy: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//       Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() );
+        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",orientation=" + printOrientation(newConfig.orientation));
         adjustFullScreen(newConfig);
     }
+
+    private String printOrientation(int orientation) {
+        switch (orientation) {
+            case ORIENTATION_UNDEFINED:
+                return "UNDEFINED";
+
+            case ORIENTATION_PORTRAIT:
+                return "PORTRAIT";
+
+            case ORIENTATION_LANDSCAPE:
+                return "LANDSCAPE";
+        }
+        return "InValid";
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (hasFocus) {
-            Log.d(TAG, "onWindowFocusChanged: ");
+            Log.d(TAG, "onWindowFocusChanged: hasFocus=" + hasFocus + ",orientation=" + printOrientation(getResources().getConfiguration().orientation));
             adjustFullScreen(getResources().getConfiguration());
         }
     }
@@ -249,7 +269,7 @@ public class MovieFragment extends Fragment implements IPip {
                 if (null == intent) {
                     return;
                 }
-                Log.d(TAG, "onReceive: action=" + intent.getAction());
+
                 if (ACTION_MEDIA_CONTROL.equals(intent.getAction())) {
                     if (null != getActivity() && getActivity().isInPictureInPictureMode()) {
                         final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
@@ -266,7 +286,7 @@ public class MovieFragment extends Fragment implements IPip {
                     }
                 } else if (Intent.ACTION_CLOSE_SYSTEM_DIALOGS.equals(intent.getAction())) {
                     String reason = intent.getStringExtra(SYSTEM_REASON);
-                    Log.d(TAG, "onReceive: reason=" + reason);
+                    Log.d(TAG, "onReceive: action=" + intent.getAction() + "reason=" + reason);
                     if (TextUtils.equals(reason, SYSTEM_HOME_KEY)) { // Press Home
                         pressHome();
                     } else if (TextUtils.equals(reason, SYSTEM_RECENT_KEY)) {  // Press Recents
@@ -345,7 +365,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onUserLeaveHint() {
         Log.e(TAG, "onUserLeaveHint: ");
-        pressHomeOrRecents();
+//        pressHomeOrRecents();
     }
 
     private void pressHomeOrRecents() {
@@ -366,14 +386,14 @@ public class MovieFragment extends Fragment implements IPip {
      */
     private void adjustFullScreen(Configuration config) {
         final View decorView = getActivity().getWindow().getDecorView();
-        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
+        if (config.orientation == ORIENTATION_LANDSCAPE) {
+//            Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
             mScrollView.setVisibility(View.GONE);
             mCloseBtn.setVisibility(View.GONE);
             mMovieView.setAdjustViewBounds(false);
         } else {
-            Log.d(TAG, "adjustFullScreen: ORIENTATION_PORTRAIT");
+//            Log.d(TAG, "adjustFullScreen: ORIENTATION_PORTRAIT");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             mScrollView.setVisibility(View.VISIBLE);
             mCloseBtn.setVisibility(View.VISIBLE);
