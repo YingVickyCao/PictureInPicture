@@ -1,4 +1,4 @@
-# Android PictureInPicture Sample
+# # Picture In Picture
 
 Picture-in-picture Support  
 https://developer.android.google.cn/guide/topics/ui/picture-in-picture?hl=en
@@ -6,67 +6,216 @@ https://developer.android.google.cn/guide/topics/ui/picture-in-picture?hl=en
 Picture-in-picture Example  
 https://github.com/android/media-samples/tree/master/PictureInPicture/
 
-This sample demonstrates basic usage of Picture-in-Picture mode for handheld devices.
-The sample plays a video. The video keeps on playing when the app is turned in to
-Picture-in-Picture mode. On Picture-in-Picture screen, the app shows an action item to
-pause or resume the video.
+How to 画中画：  
+Android >=8.0（26）（Current）  
+Android <8.0: 低版本实现画中画还是需要利用 windowManger 通过 addview 去做
 
-## Introduction
+画中画
 
-As of Android O, activities can launch in [Picture-in-Picture (PiP)][1] mode. PiP is a
-special type of [multi-window][2] mode mostly used for video playback.
+- 内置操作：手势移动、关闭画中画、画中画切换回原页面
+- PIP is single instance in phone.  
+  If 其他 app 使用 PIP， 覆盖。
 
-The app is _paused_ when it enters PiP mode, but it should continue showing content. For this
-reason, you should make sure your app does not pause playback in its [onPause()][3]
-handler. Instead, you should pause video in [onStop()][4]. For more information, see [Multi-Window
-Lifecycle][5].
+# 1 Source
 
-To specify that your activity can use PIP mode, set `android:supportsPictureInPicture` to `true` in
-the manifest. (Beginning with Android O, you do not need to set
-`android:resizeableActivity` to `true` if you are supporting PIP mode you only need to
-`setrandroid:resizeableActivity` if your activity supports other multi-window modes.)
+## AndroidManifest.xml
 
-You can pass a [PictureInPictureParams][6] to [enterPictureInPictureMode()][7] to specify how an
-activity should behave when it is in PiP mode. You can also use it to call
-[setPictureInPictureParams()][8] and update the current behavior. If the app is in not PiP mode, it
-will be used for later call of [enterPictureInPictureMode()][7].
+```
+android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
+android:supportsPictureInPicture="true"
+```
 
-With a [PictureInPictureParams][6], you can specify aspect ratio of PiP activity and action items
-available for PiP mode. The aspect ratio is used when the activity is in PiP mode. The action items
-are used as menu items in PiP mode. You can use a [PendingIntent][9] to specify what to do when the
-item is selected.
+# 2 Log
 
-[1]: https://developer.android.com/guide/topics/ui/picture-in-picture.html
-[2]: https://developer.android.com/guide/topics/ui/multi-window.html
-[3]: https://developer.android.com/reference/android/app/Activity.html#onPause()
-[4]: https://developer.android.com/reference/android/app/Activity.html#onStop()
-[5]: https://developer.android.com/guide/topics/ui/multi-window.html#lifecycle
-[6]: https://developer.android.com/reference/android/app/PictureInPictureParams.html
-[7]: https://developer.android.com/reference/android/app/Activity.html#enterPictureInPictureMode(android.app.PictureInPictureParams)
-[8]: https://developer.android.com/reference/android/app/Activity.html#setPictureInPictureParams(android.app.PictureInPictureParams)
-[9]: https://developer.android.com/reference/android/app/PendingIntent.html
+```
+onCreate
+onStart
+onResume
 
-## Pre-requisites
+// Click button ->  Enter Picture-in-Picture mode.
+onPause
+onPictureInPictureModeChanged
 
-- Android SDK 28
-- Android Build Tools v28.0.3
-- Android Support Repository
+// Click button  -> Exist Picture-in-Picture mode. Back to page
+onPictureInPictureModeChanged
+onResume
 
-## Screenshots
+// Click button ->  Enter Picture-in-Picture mode.
+onPause
+onPictureInPictureModeChanged
 
-<img src="screenshots/1-main.png" height="400" alt="Screenshot"/> <img src="screenshots/2-pip.png" height="400" alt="Screenshot"/>
+// In Picture-in-Picture mode, click Close button
+onStop
+onPictureInPictureModeChanged
+onRestart
+onStart
+onResume
+```
 
-## Getting Started
+```
+onCreate
+onStart
+onResume
 
-This sample uses the Gradle build system. To build this project, use the
-"gradlew build" command or use "Import Project" in Android Studio.
+// Press Home/Reccent -> Enter Picture-in-Picture mode.
+onUserLeaveHint
+onPause
+onPictureInPictureModeChanged true
 
-## Support
+// Click button  -> Exist Picture-in-Picture mode. Back to page
+onPictureInPictureModeChanged false
+onResume
 
-- Stack Overflow: http://stackoverflow.com/questions/tagged/android
+// Click button ->  Enter Picture-in-Picture mode.
+onPause
+onPictureInPictureModeChanged true
 
-If you've found an error in this sample, please file an issue:
-https://github.com/android/media
+// In Picture-in-Picture mode, click Close button
+onStop
+onPictureInPictureModeChanged false
+onRestart
+onStart
+onResume
+```
 
-Patches are encouraged, and may be submitted by forking this project and
-submitting a pull request through GitHub. Please see CONTRIBUTING.md for more details.
+# 3 QA：Tablet Landscape <=>PIP 模式时，onConfigurationChanged 调用两次，造成 PIP Mode 时，不需要的 view 被显示。
+
+```
+Tablet Landscape:
+
+MovieFragment: onUserLeaveHint:
+MovieFragment: minimize:
+MovieFragment: onPause:
+MovieFragment: onConfigurationChanged: isInPictureInPictureMode=true// first
+MovieActivity: onConfigurationChanged: newConfig=2
+MovieFragment: onPictureInPictureModeChanged: true
+MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true
+MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true,newConfig=2
+MovieFragment: onConfigurationChanged:isInPictureInPictureMode=true // second
+MovieActivity: onConfigurationChanged: newConfig=2
+```
+
+```
+Tablet portrait:
+
+MovieFragment: onUserLeaveHint:
+MovieFragment: minimize:
+MovieFragment: onPause:
+MovieActivity: onWindowFocusChanged: hasFocus=false
+MovieFragment: onPictureInPictureModeChanged: isInPictureInPictureMode=true
+MovieActivity: onPictureInPictureModeChanged:isInPictureInPictureMode=true,newConfig=1
+MovieFragment: adjustFullScreen: ORIENTATION_LANDSCAPE
+MovieFragment: onConfigurationChanged: 2      // first
+```
+
+解决：使用 getActivity().isInPictureInPictureMode()) 判断
+
+```java
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+    Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
+
+    if (null == getActivity() || !getActivity().isInPictureInPictureMode()){
+      super.onConfigurationChanged(newConfig);
+      return;
+    }
+      adjustFullScreen(newConfig);
+    }
+```
+
+# 4 Q: Can support other color icon instead of white icon ?
+
+A : Only support white.  
+If set not white icon, displayed as white icon,too.
+
+# 5 Q: Activity is still in Recent after invoked onDestroy()?
+
+How to reproduce?  
+First Activity -> MovieActivity.  
+MovieActivity=> PIP Mode => MovieActivity, Click Close button to destroy MovieActivity.  
+but MovieActivity is still in Recent after invoked onDestroy().
+
+A : `android:autoRemoveFromRecents="true"`
+
+# 6 Q: Media Service is still playing music after app is killed by swiped from Recents?
+
+A:
+
+- Way 1:
+
+```xml
+<service
+android:stopWithTask="true"/>
+```
+
+- Way 2:
+
+```xml
+<service
+android:stopWithTask="false"/>
+```
+
+```java
+// Service
+
+// Only if android:stopWithTask="false", onTaskRemoved can be invoked.
+@Override
+public void onTaskRemoved(Intent rootIntent) {
+  super.onTaskRemoved(rootIntent);
+  // Do clear task
+}
+```
+
+# 7 Q: PIP Mode showes many views?
+
+A:  
+In Activity / Fragment `onConfigurationChanged(@NonNull Configuration newConfig)`, hide/show views?
+
+```java
+// Fragment
+@Override
+public void onConfigurationChanged(Configuration newConfig) {
+  super.onConfigurationChanged(newConfig);
+  if (null == getActivity()) {
+      return;
+  }
+  if (getActivity().isInPictureInPictureMode()) {
+    // hide no used views in PIP Mode.
+  } else {
+  // Show views in Video Page
+  }
+}
+```
+
+# 8 Q: When press Home or Recents, go to PIP mode?
+
+A:
+Way 1 : Press Home or Recents
+
+```java
+@Override
+public void onUserLeaveHint() {
+    Log.e(TAG, "onUserLeaveHint: ");
+    pip();
+}
+```
+
+Way 2 : Only press Home
+
+```
+// Use BroadcastReceiver
+// Press Recents
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS
+onReceive: reason=recentapps
+
+// Press Home
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS
+onReceive: reason=homekey
+```
+
+# When In PIP, for tablet, value is from values
+
+```
+PIP,     value is from values
+Not PIP, value is from  values-large / values-large-land
+```

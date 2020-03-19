@@ -23,6 +23,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Icon;
 import android.net.Uri;
@@ -124,7 +125,7 @@ public class MovieFragment extends Fragment implements IPip {
         mPlay = getString(R.string.play);
         mPause = getString(R.string.pause);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        if (isSupportPIP()) {
             mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
         }
 
@@ -140,7 +141,7 @@ public class MovieFragment extends Fragment implements IPip {
 
         // Set up the video; it automatically starts.
         mMovieView.setMovieListener(mMovieListener);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!isSupportPIP()) {
             view.findViewById(R.id.pip).setVisibility(View.GONE);
         } else {
             view.findViewById(R.id.pip).setOnClickListener(v -> pip());
@@ -171,7 +172,9 @@ public class MovieFragment extends Fragment implements IPip {
     public void onStart() {
         super.onStart();
         Log.e(TAG, "onStart: ");
-        registerMediaReceiver();
+        if (isSupportPIP()) {
+            registerMediaReceiver();
+        }
     }
 
     @Override
@@ -192,7 +195,10 @@ public class MovieFragment extends Fragment implements IPip {
         // For this reason, this is the place where we should pause the video playback.
         Log.e(TAG, "onStop: ");
         mMovieView.pause();
-        unregisterReceiver();
+
+        if (isSupportPIP()) {
+            unregisterReceiver();
+        }
         super.onStop();
     }
 
@@ -267,6 +273,10 @@ public class MovieFragment extends Fragment implements IPip {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode);
 
+        if (!isSupportPIP()) {
+            return;
+        }
+
 //        if (isInPictureInPictureMode) {
 //            registerMediaReceiver();
 //        } else {
@@ -297,7 +307,7 @@ public class MovieFragment extends Fragment implements IPip {
 
     void minimize() {
         Log.d(TAG, "minimize: ");
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!isSupportPIP()) {
             return;
         }
         if (mMovieView == null) {
@@ -313,23 +323,29 @@ public class MovieFragment extends Fragment implements IPip {
         getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
     }
 
+    private boolean isSupportPIP() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
+                && null != getActivity() && getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+    }
+
     /**
      * Press Home or Recent -> Enters Picture-in-Picture mode.
      */
     @Override
     public void onUserLeaveHint() {
         Log.e(TAG, "onUserLeaveHint: ");
-        if (iWantToBeInPipModeNow()) {
-            pip();
-        }
+        pressHomeOrRecents();
     }
 
-    private void pressHome() {
+    private void pressHomeOrRecents() {
         pip();
     }
 
-    private boolean iWantToBeInPipModeNow() {
-        return false;
+    private void pressHome() {
+        if (!isSupportPIP()) {
+            return;
+        }
+        pip();
     }
 
     /**
@@ -391,7 +407,7 @@ public class MovieFragment extends Fragment implements IPip {
      * @param requestCode The request code for the {@link PendingIntent}.
      */
     void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+        if (!isSupportPIP()) {
             return;
         }
         final ArrayList<RemoteAction> actions = new ArrayList<>();
