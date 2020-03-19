@@ -35,4 +35,6 @@
     <string name="switch_media_session">Switch to using MediaSession</string>
     <string name="title_big_buck_bunny">Big Buck Bunny</string>
     <string name="close">Close</string>
+
+    <string name="screen">normal</string>
 </resources>

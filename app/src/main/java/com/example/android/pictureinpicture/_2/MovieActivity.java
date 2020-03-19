@@ -99,7 +99,7 @@ public class MovieActivity extends AppCompatActivity {
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration newConfig) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig);
-        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode + ",newConfig=" + newConfig.orientation);
+        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode + ",newConfig=" + newConfig.orientation + ",screen=" + getString(R.string.screen));
     }
 
 //    @Override

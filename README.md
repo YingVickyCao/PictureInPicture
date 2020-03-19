@@ -213,9 +213,19 @@ onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS
 onReceive: reason=homekey
 ```
 
-# When In PIP, for tablet, value is from values
+# 9 Q:When In PIP, for tablet, value is from values
+
+Q: In PIP of tablet , when trying to reuse fragment VideoPhoneFragment.java and VideoTabletFragment.java, use screen string to check if is Tablet, is always phone.
 
 ```
-PIP,     value is from values
-Not PIP, value is from  values-large / values-large-land
+If normal, phone.
+If large/larage_land/xlarage/xlarage_land, tablet.
+
+When PIP,     screen = normal(values)
+When Not PIP, screen = large(values-large) / larage_land(values-large-land)
 ```
+
+A:  
+How to find fragment tag?  
+Fist check: find fagment by id. If not null, return tag.
+Then check: find fragment by tag.

@@ -114,6 +114,7 @@ public class MovieFragment extends Fragment implements IPip {
     private String mPause;
 
     private View mCloseBtn;
+    private View mTestBtn;
 
     @Nullable
     @Override
@@ -133,6 +134,10 @@ public class MovieFragment extends Fragment implements IPip {
         mMovieView = view.findViewById(R.id.movie);
         mScrollView = view.findViewById(R.id.scroll);
         mCloseBtn = view.findViewById(R.id.close);
+        mTestBtn = view.findViewById(R.id.testBtn);
+        mTestBtn.setVisibility(View.VISIBLE);
+        mTestBtn.setOnClickListener(v -> clickTestBtn());
+
         mCloseBtn.setOnClickListener(v -> clickClose());
 
         Button switchExampleButton = view.findViewById(R.id.switch_example);
@@ -152,6 +157,10 @@ public class MovieFragment extends Fragment implements IPip {
     private void clickClose() {
         mMovieView.pause();
         getActivity().finish();
+    }
+
+    private void clickTestBtn() {
+        Log.d(TAG, "clickTestBtn: orientation=" + getResources().getConfiguration().orientation + ",screen=" + getString(R.string.screen) + ",isPIP=" + getActivity().isInPictureInPictureMode());
     }
 
     private void switchActivityOnClick(View view) {
@@ -246,9 +255,11 @@ public class MovieFragment extends Fragment implements IPip {
                         final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
                         switch (controlType) {
                             case CONTROL_TYPE_PLAY:
+                                clickTestBtn();
                                 mMovieView.play();
                                 break;
                             case CONTROL_TYPE_PAUSE:
+                                clickTestBtn();
                                 mMovieView.pause();
                                 break;
                         }
@@ -271,7 +282,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
-        Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode);
+        Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode + ",screen=" + getString(R.string.screen));
 
         if (!isSupportPIP()) {
             return;
