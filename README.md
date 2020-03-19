@@ -27,7 +27,7 @@ android:supportsPictureInPicture="true"
 
 # 2 Log
 
-- Phone is porttrait
+## Phone is portrait
 
 ```
 MovieFragment.java, Phone is porttrait
@@ -79,7 +79,7 @@ onDestroyView: isInPictureInPictureMode=false
 onDestroy: isInPictureInPictureMode=false
 ```
 
-- Phone is landscape
+## Phone is landscape
 
 ```
 MovieFragment.java, Phone is landscape
@@ -118,6 +118,104 @@ onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
 
 // Pickup activity from Recents
 onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onRestart: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
+
+// Close MovieFragment and it's activity
+onPause: isInPictureInPictureMode=false
+onStop: isInPictureInPictureMode=false
+onDestroyView: isInPictureInPictureMode=false
+onDestroy: isInPictureInPictureMode=false
+```
+
+## Tablet is portrait
+
+```
+MovieFragment.java, Tablet is portrait
+
+onCreateView: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+
+// Enter PIP (Press Home/Recent)
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
+minimize:
+onUserLeaveHint:
+onPause: isInPictureInPictureMode=true
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+
+// Out PIP
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+onResume: isInPictureInPictureMode=false
+
+// Enter PIP (Click button)
+minimize:
+onPause: isInPictureInPictureMode=true
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+
+// In PIP, click X
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onStop: isInPictureInPictureMode=false
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=large
+
+// Pickup activity from Recents
+onRestart: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
+
+// Close MovieFragment and it's activity
+onPause: isInPictureInPictureMode=false
+onStop: isInPictureInPictureMode=false
+onDestroyView: isInPictureInPictureMode=false
+onDestroy: isInPictureInPictureMode=false
+```
+
+## Tablet is landcape
+
+```
+MovieFragment.java, Tablet is landcape
+
+onCreateView: isInPictureInPictureMode=false
+onStart: isInPictureInPictureMode=false
+onResume: isInPictureInPictureMode=false
+onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
+
+// Enter PIP (Press Home/Recent)
+onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
+minimize:
+onPause: isInPictureInPictureMode=true
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large-land
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+
+// Out PIP
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
+onResume: isInPictureInPictureMode=false
+
+// Enter PIP (Click button)
+minimize:
+onPause: isInPictureInPictureMode=true
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large-land
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+
+// In PIP, click X
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onStop: isInPictureInPictureMode=false
+onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=large-land
+
+// Pickup activity from Recents
 onRestart: isInPictureInPictureMode=false
 onStart: isInPictureInPictureMode=false
 onResume: isInPictureInPictureMode=false
