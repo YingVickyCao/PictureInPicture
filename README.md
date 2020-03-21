@@ -448,7 +448,7 @@ getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
   从 Recents clear 后，杀死 Main， A PIP 还活着（sysem bar 可操作）
 - Back 顺序异常：杀死 Main。A PIP 还活着（sysem bar 可操作）
 
-# 13 When A is PIP mode,user click video item from Video list page. How to handle?
+# 13 Q: When A is PIP mode,user click video item from Video list page. How to handle?
 
 A Activity is main vieo page supporting auto next.  
 B Activity supports Only one video).User can pickup ref video of A, then A -> B.
