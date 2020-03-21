@@ -383,6 +383,26 @@ How to find fragment tag?
 Fist check: find fagment by id. If not null, return tag.
 Then check: find fragment by tag.
 
-# 10 How use to disable Picture-in-Picture Mode?
+# 10 How can user disable Picture-in-Picture Mode?
 
 Settings -> App -> Advances -> Picture-in-picture allowed.
+
+# 11 Check if app support Picture-in-Picture
+
+Step 1 : API >= 26 (Android 8)
+
+Step 2 : check if use not alow Picture-in-Picture.
+
+```java
+// AppOpsManagerCompat
+AppOpsManagerCompat.noteOpNoThrow(getActivity(), AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName())
+
+// AppOpsManager (API 19)
+((AppOpsManager) appOpsManager).unsafeCheckOp(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName())
+```
+
+Step 3 : PIP might be disabled on devices that have low RAM.
+
+```java
+getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
+```

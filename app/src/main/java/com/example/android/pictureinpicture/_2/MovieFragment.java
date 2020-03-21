@@ -16,6 +16,8 @@
 
 package com.example.android.pictureinpicture._2;
 
+import android.annotation.SuppressLint;
+import android.app.AppOpsManager;
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
 import android.app.RemoteAction;
@@ -41,6 +43,7 @@ import android.widget.ScrollView;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.AppOpsManagerCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.android.pictureinpicture.R;
@@ -130,7 +133,7 @@ public class MovieFragment extends Fragment implements IPip {
         mPlay = getString(R.string.play);
         mPause = getString(R.string.pause);
 
-        if (isSupportPIP()) {
+        if (checkIsApiSupport()) {
             mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
         }
 
@@ -350,14 +353,67 @@ public class MovieFragment extends Fragment implements IPip {
         mCloseBtn.setVisibility(View.GONE);
         // Calculate the aspect ratio of the PiP screen.
         Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
-        mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
-//        getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
+            getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
+        }
     }
 
     private boolean isSupportPIP() {
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O
-                && null != getActivity() && getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+        if (!checkIsApiSupport()) {
+            return false;
+        }
+        if (!checkIsUserAllowPIP()) {
+            return false;
+        }
+        return checkIsSystemSupportPUP();
     }
+
+    private boolean checkIsApiSupport() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
+    private boolean checkIsSystemSupportPUP() {
+        // PIP might be disabled on devices that have low RAM.
+        if (null == getActivity()) {
+            return false;
+        }
+        boolean isSystemHasPIPFeature = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
+        Log.d(TAG, "isSupportPIP: FEATURE_PICTURE_IN_PICTURE=" + isSystemHasPIPFeature);
+        return isSystemHasPIPFeature;
+    }
+
+    private boolean checkIsUserAllowPIP() {
+        if (null == getActivity()) {
+            return false;
+        }
+        /*
+        // Check if use allow /not allow PICTURE_IN_PICTURE
+        try {
+            Object appOpsManager = getActivity().getSystemService(Context.APP_OPS_SERVICE);
+            if (!(appOpsManager instanceof AppOpsManager)) {
+                return false;
+            }
+            // API 29
+//            int result = ((AppOpsManager) appOpsManager).unsafeCheckOp(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName());
+//            int result = ((AppOpsManager) appOpsManager).unsafeCheckOpNoThrow(AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName());
+            Log.d(TAG, "isSupportPIP: OPSTR_PICTURE_IN_PICTURE=" + result); // MODE_ERRORED
+            if (AppOpsManager.MODE_ALLOWED == result) {
+                return true;
+            }
+        } catch (SecurityException ex) {
+            // java.lang.SecurityException: com.example.android.pictureinpicture from uid 10308 not allowed to perform PICTURE_IN_PICTURE
+            Log.d(TAG, "isSupportPIP: OPSTR_PICTURE_IN_PICTURE ex="+ex);
+            return false;
+        }
+         */
+
+        @SuppressLint("InlinedApi") int result = AppOpsManagerCompat.noteOpNoThrow(getActivity(), AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName());
+        // In Android 10 Google Pixel, If allow,MODE_ALLOWED. If not allow, MODE_ERRORED
+        Log.d(TAG, "isSupportPIP: OPSTR_PICTURE_IN_PICTURE=" + result); // MODE_ERRORED
+        return AppOpsManager.MODE_ALLOWED == result;
+    }
+
 
     /**
      * Press Home or Recent -> Enters Picture-in-Picture mode.
@@ -438,7 +494,7 @@ public class MovieFragment extends Fragment implements IPip {
      * @param requestCode The request code for the {@link PendingIntent}.
      */
     void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType, int requestCode) {
-        if (!isSupportPIP()) {
+        if (!checkIsApiSupport()) {
             return;
         }
         final ArrayList<RemoteAction> actions = new ArrayList<>();
