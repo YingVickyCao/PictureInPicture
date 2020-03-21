@@ -124,7 +124,7 @@ public class MovieFragment extends Fragment implements IPip {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.movie_layout2, container, false);
-        Log.e(TAG, "onCreateView: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
+        Log.e(TAG, "onCreateView: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",screen=" + getString(R.string.screen));
 
         // Prepare string resources for Picture-in-Picture actions.
         mPlay = getString(R.string.play);
@@ -351,7 +351,7 @@ public class MovieFragment extends Fragment implements IPip {
         // Calculate the aspect ratio of the PiP screen.
         Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
         mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
-        getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
+//        getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
     }
 
     private boolean isSupportPIP() {

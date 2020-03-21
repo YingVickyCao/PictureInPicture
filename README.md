@@ -382,3 +382,7 @@ A:
 How to find fragment tag?  
 Fist check: find fagment by id. If not null, return tag.
 Then check: find fragment by tag.
+
+# 10 How use to disable Picture-in-Picture Mode?
+
+Settings -> App -> Advances -> Picture-in-picture allowed.
