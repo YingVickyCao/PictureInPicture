@@ -448,7 +448,7 @@ getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
   从 Recents clear 后，杀死 Main， A PIP 还活着（sysem bar 可操作）
 - Back 顺序异常：杀死 Main。A PIP 还活着（sysem bar 可操作）
 
-Q : When In A Activity (main vieo page supporting auto next)is PIP mode,user click video item to show B Activity (support Only one video). How to handle?  
+**Q : When In A Activity (main vieo page supporting auto next)is PIP mode,user click video item to show B Activity (support Only one video). How to handle?**
 A : When user click video, this is to a signal to begin new video reading session.  
 So,
 Step 1 : send event to A and B. A and B will close itself.  
