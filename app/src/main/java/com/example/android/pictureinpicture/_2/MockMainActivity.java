@@ -9,15 +9,19 @@ import androidx.annotation.Nullable;
 
 import com.example.android.pictureinpicture.R;
 
-public class FirstActivity extends Activity {
-    private static final String TAG = FirstActivity.class.getSimpleName();
+public class MockMainActivity extends Activity {
+    private static final String TAG = MockMainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first);
 
-        startActivity(new Intent(this, MovieActivity.class));
+        findViewById(R.id.showMoviePage).setOnClickListener(v -> showMoviePage());
+    }
+
+    private void showMoviePage() {
+        startActivity(new Intent(this, MovieAActivity.class));
     }
 
     @Override

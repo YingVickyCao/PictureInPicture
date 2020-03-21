@@ -25,7 +25,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
 
-        <activity android:name="._2.FirstActivity">
+        <activity android:name="._2.MockMainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -33,7 +33,13 @@
         </activity>
 
         <activity
-            android:name="._2.MovieActivity"
+            android:name="._2.MovieAActivity"
+            android:autoRemoveFromRecents="true"
+            android:configChanges="screenSize|orientation|keyboardHidden|smallestScreenSize|screenLayout"
+            android:supportsPictureInPicture="true" />
+
+        <activity
+            android:name="._2.MovieBActivity"
             android:autoRemoveFromRecents="true"
             android:configChanges="screenSize|orientation|keyboardHidden|smallestScreenSize|screenLayout"
             android:supportsPictureInPicture="true" />
@@ -43,9 +49,13 @@
             android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
             android:supportsPictureInPicture="true" />
 
+        <!--        <activity-->
+        <!--            android:name="._origin.MediaSessionPlaybackActivity"-->
+        <!--            android:autoRemoveFromRecents="true"-->
+        <!--            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"-->
+        <!--            android:supportsPictureInPicture="true" />-->
         <activity
             android:name="._origin.MediaSessionPlaybackActivity"
-            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation"
-            android:supportsPictureInPicture="true" />
+            android:configChanges="screenSize|orientation" />
     </application>
 </manifest>

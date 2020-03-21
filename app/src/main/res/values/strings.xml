@@ -19,6 +19,7 @@
     <string name="play">Play</string>
     <string name="pause">Pause</string>
     <string name="info">Info</string>
+    <string name="test">Test</string>
     <string name="info_description">Information about this video</string>
     <string name="info_uri" translatable="false">https://peach.blender.org/</string>
     <string name="fast_forward">Fast forward</string>

@@ -20,14 +20,9 @@ import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
-
 import android.transition.TransitionManager;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -37,6 +32,9 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+
+import androidx.annotation.Nullable;
+import androidx.annotation.RawRes;
 
 import com.example.android.pictureinpicture.R;
 
@@ -98,6 +96,7 @@ public class MovieView extends RelativeLayout {
     private final ImageButton mFastForward;
     private final ImageButton mFastRewind;
     private final ImageButton mMinimize;
+    private final ImageButton mTest;
 
     /**
      * This plays the video. This will be null when no video is set.
@@ -152,6 +151,7 @@ public class MovieView extends RelativeLayout {
         mFastForward = findViewById(R.id.fast_forward);
         mFastRewind = findViewById(R.id.fast_rewind);
         mMinimize = findViewById(R.id.minimize);
+        mTest = findViewById(R.id.testBtn);
 
         final TypedArray attributes = context.obtainStyledAttributes(attrs, R.styleable.MovieView, defStyleAttr, R.style.Widget_PictureInPicture_MovieView);
         setVideoResourceId(attributes.getResourceId(R.styleable.MovieView_android_src, 0));
@@ -345,6 +345,7 @@ public class MovieView extends RelativeLayout {
         mFastForward.setVisibility(View.VISIBLE);
         mFastRewind.setVisibility(View.VISIBLE);
         mMinimize.setVisibility(View.VISIBLE);
+        mTest.setVisibility(VISIBLE);
     }
 
     /**
@@ -357,6 +358,7 @@ public class MovieView extends RelativeLayout {
         mFastForward.setVisibility(View.INVISIBLE);
         mFastRewind.setVisibility(View.INVISIBLE);
         mMinimize.setVisibility(View.INVISIBLE);
+        mTest.setVisibility(INVISIBLE);
     }
 
     /**

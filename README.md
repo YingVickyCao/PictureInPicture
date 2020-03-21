@@ -406,3 +406,44 @@ Step 3 : PIP might be disabled on devices that have low RAM.
 ```java
 getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)
 ```
+
+# 12 Activity lifecycle with PIP
+
+## Case 1 : Main -> A(PIP Mode) -> B （Support PIP), Then : Press back
+
+- A 和 B 是同一个 PIP 小窗口：A and B 成为僵尸 PIP 画面（no system controll bar）  
+  Main 在 Recent 中是一个单独的窗口。  
+  从 Recent 中只能杀死 Main。
+- Recent 只有 Main 的僵尸画面。单击 Main 的僵尸画面，进入 Main。
+- 杀死 Main，重新 Click app，进入 AB，没有进入 Main。 AB 的 PIP 画面再次出现 system controll bar。Click X，退出 PIP Mode。
+- Back 顺序异常 ： Main is destroyed, but A and B not any lifecycle function is invorked.
+
+## Case 2: Main -> A(PIP Mode) -> B （Not Support PIP）, Then : Press back
+
+- B: onResume:isInPictureInPictureMode=true => A 是 PIP mode，尽管 B 配置不支持 PIP。但是因为是由 A 启动，B 也被动成了 PIP mode。 并且无论是不是平板，PIPmode 时，values 和 layout 是都是 normal 类型。
+- 其他 同 Case 1 的结论
+
+## Case 3: Main -> A(Exit from PIP Mode) -> B （Not Support PIP）, Then : Press back
+
+- B : onResume:isInPictureInPictureMode=false
+- A 和 B 在 Recents 在同一个单独的窗口,Main 是一个单独的窗口 => 只要曾经 PIP，就单独占据一个 task stack。  
+  从 Recent 删除 Main，main 被删除。  
+  从 Recent 删除 AB 的 PIP task ，AB 被删除。  
+  从 Recents clear all 后，整个 app = main + AB 的 PIP ，全杀死。
+- Back 顺序正常：B -> A -> Main
+
+## Case 4: Main -> A(Exit from PIP Mode) -> B （Support PIP）, Then : Press back
+
+同 Case 3
+
+## Case 5: Main -> A(Support PIP，but PIP mode is not even once) -> B （Support PIP）
+
+- B : onResume:isInPictureInPictureMode=false
+- main, A and B ， 在 Rencents 是一个窗口。 从 Recents clear 后，整个 app 都杀死。
+- Back 顺序正常：B -> A -> Main
+
+# Case 6: Main -> A(PIP mode)
+
+- main, 在 Rencents 是一个窗口。 A 是 PIP 窗口。  
+  从 Recents clear 后，杀死 Main， A PIP 还活着（sysem bar 可操作）
+- Back 顺序异常：杀死 Main。A PIP 还活着（sysem bar 可操作）

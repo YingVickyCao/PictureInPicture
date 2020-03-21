@@ -24,13 +24,13 @@ import android.support.v4.media.MediaMetadataCompat;
 import android.support.v4.media.session.MediaControllerCompat;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
-
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.util.Log;
 import android.util.Rational;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.android.pictureinpicture.R;
 import com.example.android.pictureinpicture.widget.MovieView;
@@ -130,12 +130,6 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
         findViewById(R.id.pip).setOnClickListener(mOnClickListener);
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        initializeMediaSession();
-    }
-
     private void initializeMediaSession() {
         mSession = new MediaSessionCompat(this, TAG);
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
@@ -162,8 +156,39 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.d(TAG, "onRestart: ");
+        if (!isInPictureInPictureMode()) {
+            // Show the video controls so the video can be easily resumed.
+            mMovieView.showControls();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.d(TAG, "onStart: ");
+        initializeMediaSession();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume: ");
+        Log.d(TAG, "onResume:isInPictureInPictureMode=" + isInPictureInPictureMode());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause: ");
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
+        Log.d(TAG, "onStop: ");
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
         mMovieView.pause();
@@ -172,12 +197,9 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        if (!isInPictureInPictureMode()) {
-            // Show the video controls so the video can be easily resumed.
-            mMovieView.showControls();
-        }
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
     }
 
     @Override
@@ -195,9 +217,9 @@ public class MediaSessionPlaybackActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onPictureInPictureModeChanged(
-            boolean isInPictureInPictureMode, Configuration configuration) {
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode, Configuration configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, configuration);
+        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + isInPictureInPictureMode);
         if (!isInPictureInPictureMode) {
             // Show the video controls if the video is not playing
             if (mMovieView != null && !mMovieView.isPlaying()) {

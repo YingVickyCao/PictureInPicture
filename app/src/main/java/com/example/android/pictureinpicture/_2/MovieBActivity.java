@@ -27,8 +27,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.android.pictureinpicture.R;
 
-public class MovieActivity extends AppCompatActivity {
-    private static final String TAG = MovieActivity.class.getSimpleName();
+public class MovieBActivity extends AppCompatActivity {
+    private static final String TAG = MovieBActivity.class.getSimpleName();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

@@ -27,15 +27,18 @@
         android:background="@drawable/shade"
         android:visibility="invisible" />
 
-    <Button
+    <ImageButton
         android:id="@+id/testBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/toggle"
         android:layout_toStartOf="@+id/fast_rewind"
-        android:background="@android:color/holo_red_dark"
+        android:background="?android:attr/selectableItemBackground"
         android:contentDescription="@string/fast_forward"
-        android:visibility="gone" />
+        android:minWidth="64dp"
+        android:minHeight="64dp"
+        android:src="@drawable/ic_exit_to_app_24px"
+        android:visibility="invisible" />
 
     <ImageButton
         android:id="@+id/fast_rewind"

@@ -97,6 +97,8 @@ public class MovieFragment extends Fragment implements IPip {
      */
     private static final int CONTROL_TYPE_PAUSE = 2;
 
+    private static final int CONTROL_TYPE_TEST = 3;
+
     /**
      * The arguments to be used for Picture-in-Picture mode.
      */
@@ -167,7 +169,12 @@ public class MovieFragment extends Fragment implements IPip {
     }
 
     private void clickTestBtn() {
-        Log.d(TAG, "clickTestBtn: orientation=" + getResources().getConfiguration().orientation + ",screen=" + getString(R.string.screen) + ",isPIP=" + getActivity().isInPictureInPictureMode());
+        // In PIP : clickTestBtn: orientation=2,screen=normal,isPIP=true
+        // Out PIP: clickTestBtn: orientation=2,screen=large-land,isPIP=false
+//        Log.d(TAG, "clickTestBtn: orientation=" + getResources().getConfiguration().orientation + ",screen=" + getString(R.string.screen) + ",isPIP=" + getActivity().isInPictureInPictureMode());
+
+        // When A activity is PIP mode, start a new activity B: the new Activity B is small window.
+        startActivity(new Intent(getContext(), MovieBActivity.class));
     }
 
     private void switchActivityOnClick(View view) {
@@ -197,6 +204,10 @@ public class MovieFragment extends Fragment implements IPip {
     public void onResume() {
         super.onResume();
         Log.e(TAG, "onResume: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
+
+        if (getActivity().isInPictureInPictureMode()) {
+            minimize();
+        }
     }
 
     @Override
@@ -278,12 +289,14 @@ public class MovieFragment extends Fragment implements IPip {
                         final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
                         switch (controlType) {
                             case CONTROL_TYPE_PLAY:
-                                clickTestBtn();
                                 mMovieView.play();
                                 break;
                             case CONTROL_TYPE_PAUSE:
                                 clickTestBtn();
                                 mMovieView.pause();
+                                break;
+                            case CONTROL_TYPE_TEST:
+                                clickTestBtn();
                                 break;
                         }
                     }
@@ -352,7 +365,10 @@ public class MovieFragment extends Fragment implements IPip {
         mScrollView.setVisibility(View.GONE);
         mCloseBtn.setVisibility(View.GONE);
         // Calculate the aspect ratio of the PiP screen.
-        Rational aspectRatio = new Rational(mMovieView.getWidth(), mMovieView.getHeight());
+        if (mMovieView.getWidth() <= 0) {
+
+        }
+        Rational aspectRatio = mMovieView.getWidth() <= 0 ? new Rational(16, 9) : new Rational(mMovieView.getWidth(), mMovieView.getHeight());
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mPictureInPictureParamsBuilder.setAspectRatio(aspectRatio).build();
             getActivity().enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
@@ -512,6 +528,12 @@ public class MovieFragment extends Fragment implements IPip {
                 getString(R.string.info),
                 getString(R.string.info_description),
                 PendingIntent.getActivity(MovieFragment.this.getActivity(), REQUEST_INFO, new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.info_uri))), 0)));
+
+        // add Test
+        Intent testIntent = new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, CONTROL_TYPE_TEST);
+        final PendingIntent testPendingIntent = PendingIntent.getBroadcast(MovieFragment.this.getActivity(), requestCode, testIntent, 0);
+        final Icon testIcon = Icon.createWithResource(MovieFragment.this.getActivity(), R.drawable.ic_exit_to_app_24px);
+        actions.add(new RemoteAction(testIcon, getString(R.string.test), getString(R.string.test), testPendingIntent));
 
         mPictureInPictureParamsBuilder.setActions(actions);
 
