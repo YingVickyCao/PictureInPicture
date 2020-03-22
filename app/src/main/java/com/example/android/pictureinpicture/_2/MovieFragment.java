@@ -17,6 +17,7 @@
 package com.example.android.pictureinpicture._2;
 
 import android.annotation.SuppressLint;
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
@@ -51,6 +52,8 @@ import com.example.android.pictureinpicture._origin.MediaSessionPlaybackActivity
 import com.example.android.pictureinpicture.widget.MovieView;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
 import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
@@ -125,6 +128,8 @@ public class MovieFragment extends Fragment implements IPip {
     private View mCloseBtn;
     private View mTestBtn;
 
+    private boolean mIsOnStopCalled = false;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -198,6 +203,7 @@ public class MovieFragment extends Fragment implements IPip {
         if (isSupportPIP()) {
             registerMediaReceiver();
         }
+        mIsOnStopCalled = false;
     }
 
     @Override
@@ -226,6 +232,7 @@ public class MovieFragment extends Fragment implements IPip {
         if (isSupportPIP()) {
             unregisterReceiver();
         }
+        mIsOnStopCalled = true;
         super.onStop();
     }
 
@@ -330,6 +337,12 @@ public class MovieFragment extends Fragment implements IPip {
 //            unregisterReceiver();
 //        }
         if (!isInPictureInPictureMode) {
+            if (mIsOnStopCalled) {
+                if (null != getActivity()) {
+                    getActivity().finish();
+                    return;
+                }
+            }
             // Show the video controls if the video is not playing
             if (mMovieView != null && !mMovieView.isPlaying()) {
                 mMovieView.showControls();
@@ -395,7 +408,7 @@ public class MovieFragment extends Fragment implements IPip {
             return false;
         }
         boolean isSystemHasPIPFeature = getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE);
-        Log.d(TAG, "isSupportPIP: FEATURE_PICTURE_IN_PICTURE=" + isSystemHasPIPFeature);
+//        Log.d(TAG, "isSupportPIP: FEATURE_PICTURE_IN_PICTURE=" + isSystemHasPIPFeature);
         return isSystemHasPIPFeature;
     }
 
@@ -426,7 +439,7 @@ public class MovieFragment extends Fragment implements IPip {
 
         @SuppressLint("InlinedApi") int result = AppOpsManagerCompat.noteOpNoThrow(getActivity(), AppOpsManager.OPSTR_PICTURE_IN_PICTURE, android.os.Process.myUid(), getActivity().getPackageName());
         // In Android 10 Google Pixel, If allow,MODE_ALLOWED. If not allow, MODE_ERRORED
-        Log.d(TAG, "isSupportPIP: OPSTR_PICTURE_IN_PICTURE=" + result); // MODE_ERRORED
+//        Log.d(TAG, "isSupportPIP: OPSTR_PICTURE_IN_PICTURE=" + result); // MODE_ERRORED
         return AppOpsManager.MODE_ALLOWED == result;
     }
 
@@ -541,5 +554,21 @@ public class MovieFragment extends Fragment implements IPip {
         // Note this call can happen even when the app is not in PiP mode. In that case, the
         // arguments will be used for at the next call of #enterPictureInPictureMode.
         getActivity().setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
+    }
+
+    public static void navToLauncherTask(Context appContext) {
+        ActivityManager activityManager = (ActivityManager) appContext.getSystemService(Context.ACTIVITY_SERVICE);
+        if (null == activityManager) {
+            return;
+        }
+        final List<ActivityManager.AppTask> appTasks = activityManager.getAppTasks();
+        for (ActivityManager.AppTask task : appTasks) {
+            final Intent baseIntent = task.getTaskInfo().baseIntent;
+            final Set<String> categories = baseIntent.getCategories();
+            if (categories != null && categories.contains(Intent.CATEGORY_LAUNCHER)) {
+                task.moveToFront();
+                return;
+            }
+        }
     }
 }

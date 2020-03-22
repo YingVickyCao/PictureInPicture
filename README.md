@@ -458,3 +458,29 @@ When user click video, this is to a signal to begin new video reading session.
 Step 1 : send event to notify A and B to close themselves.  
 Step 2 : open the new video in A.  
 Only when A is not in PIP mode, user can pickup up ref video, A -> B. The ref video will be opened in B.
+
+# 14 Q: How to listener PIP X click action to exit activity?
+
+A :  
+No way to listen X click action.  
+Use bool flag to check if user had clicked PIP X.
+
+```java
+@Override
+    public void onStop() {
+        mIsOnStopCalled = true;
+        super.onStop();
+    }
+
+@Override
+    public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode);
+        if (!isInPictureInPictureMode) {
+            if (mIsOnStopCalled) {
+                if (null != getActivity()) {
+                    getActivity().finish();
+                    return;
+                }
+            }
+    }
+```
