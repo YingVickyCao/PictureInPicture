@@ -10,11 +10,9 @@ How to 画中画：
 Android >=8.0（26）（Current）  
 Android <8.0: 低版本实现画中画还是需要利用 windowManger 通过 addview 去做
 
-画中画
+画中画：
 
 - 内置操作：手势移动、关闭画中画、画中画切换回原页面
-- PIP is single instance in phone.  
-  If 其他 app 使用 PIP， 覆盖。
 
 # 1 Source
 
@@ -484,3 +482,16 @@ Use bool flag to check if user had clicked PIP X.
             }
     }
 ```
+
+# 15 结论
+
+- PIP is single instance in phone.  
+  If 其他 app 使用 PIP， 覆盖。
+- Started Activity by PIP mode activity， 在 PIP 窗口运行。即使 Started Activity 配置为不支持 PIP，只要是被 PIP mode activity 启动，也同样被动变成 PIP mode activity。
+- Dialog of PIP mode activity， 在 PIP 窗口运行。
+  After 点击 PIP 窗口 中的 dialog 中的按钮，实际上没有点击到。 两次点击后，extend PIP to normal。
+- Toast of PIP mode activity，不受影响，默认出现在屏幕的正下方。
+- MainActivity -> A Activity (PIP). Back 时， A 不捕获，MainActivity 捕获，所以，MainActivity onDestroy(), A is still onPause，状态不变。
+  How to 当 MainActivity 销毁后，A 也跟着销毁，否则 A 还在，太奇怪？  
+  MainActivity onDestroy 发送 event 到 A，A 接受后，销毁 A 自己。
+- A Activity (PIP)，A 执行 了 onPause， 不执行 onStop()，因为依然能被用户看到，但不能直接被用户操作。只能通过 在 A 上面添加的 PIP system 窗口（PipMenuActivity）操作。

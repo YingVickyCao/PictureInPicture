@@ -34,6 +34,9 @@ public class MovieAActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
+
+        ActivityCache.getInstance().addActivity(this);
+
         setContentView(R.layout.activity_movie);
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, new MovieFragment(), MovieFragment.TAG).commit();
     }
@@ -78,6 +81,7 @@ public class MovieAActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: ");
+        ActivityCache.getInstance().removeActivity(this);
     }
 
     @Override
