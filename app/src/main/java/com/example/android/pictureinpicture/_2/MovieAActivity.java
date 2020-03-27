@@ -27,6 +27,10 @@ import androidx.fragment.app.Fragment;
 
 import com.example.android.pictureinpicture.R;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 public class MovieAActivity extends AppCompatActivity {
     private static final String TAG = MovieAActivity.class.getSimpleName();
 
@@ -34,6 +38,8 @@ public class MovieAActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
+        EventBus.getDefault().register(this);
+
 
         ActivityCache.getInstance().addActivity(this);
 
@@ -81,7 +87,14 @@ public class MovieAActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: ");
+        EventBus.getDefault().unregister(this);
         ActivityCache.getInstance().removeActivity(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onPrepareDestroyAppEvent(PrepareDestroyAppEvent event) {
+        Log.d(TAG, "PrepareDestroyAppEvent: ");
+        finish();
     }
 
     @Override

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primary">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/showMoviePage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Show Movie Page"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/alertDialog_by_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AlertDialog  In PIP"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/alertDialog_by_not_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AlertDialog by Not-PIP"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/toast_by_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toast in PIP"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/toast_by_not_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Toast by Not-PIP"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/openBPage_by_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open B page by PIP"
+            android:textAllCaps="false" />
+
+        <Button
+            android:id="@+id/openBPage_by_not_pip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Open B page by Not-PIP"
+            android:textAllCaps="false" />
+
+    </LinearLayout>
+</FrameLayout>

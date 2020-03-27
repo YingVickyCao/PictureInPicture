@@ -17,6 +17,7 @@
 package com.example.android.pictureinpicture._2;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.PendingIntent;
@@ -179,7 +180,27 @@ public class MovieFragment extends Fragment implements IPip {
 //        Log.d(TAG, "clickTestBtn: orientation=" + getResources().getConfiguration().orientation + ",screen=" + getString(R.string.screen) + ",isPIP=" + getActivity().isInPictureInPictureMode());
 
         // When A activity is PIP mode, start a new activity B: the new Activity B is small window.
-        startActivity(new Intent(getContext(), MovieBActivity.class));
+//        startActivity(new Intent(getContext(), MovieBActivity.class));
+//        startActivity(new Intent(getActivity(), BActivity.class));
+//        openBPage_by_pip();
+//        openBPage_by_not_pip();
+    }
+
+
+    private void openBPage_by_pip() {
+        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+        Log.d(TAG, "openBPage_by_pip: " + activity.getClass().getSimpleName());
+        Intent intent = new Intent(activity, BActivity.class);
+//        startActivity(intent);
+        activity.startActivity(intent);
+    }
+
+    private void openBPage_by_not_pip() {
+        Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();
+        Log.d(TAG, "openBPage_by_not_pip: " + activity.getClass().getSimpleName());
+        Intent intent = new Intent(activity, BActivity.class);
+//        startActivity(intent);
+        activity.startActivity(intent);
     }
 
     private void switchActivityOnClick(View view) {

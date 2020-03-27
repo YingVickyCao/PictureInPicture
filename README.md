@@ -487,11 +487,52 @@ Use bool flag to check if user had clicked PIP X.
 
 - PIP is single instance in phone.  
   If 其他 app 使用 PIP， 覆盖。
-- Started Activity by PIP mode activity， 在 PIP 窗口运行。即使 Started Activity 配置为不支持 PIP，只要是被 PIP mode activity 启动，也同样被动变成 PIP mode activity。
-- Dialog of PIP mode activity， 在 PIP 窗口运行。
-  After 点击 PIP 窗口 中的 dialog 中的按钮，实际上没有点击到。 两次点击后，extend PIP to normal。
-- Toast of PIP mode activity，不受影响，默认出现在屏幕的正下方。
-- MainActivity -> A Activity (PIP). Back 时， A 不捕获，MainActivity 捕获，所以，MainActivity onDestroy(), A is still onPause，状态不变。
-  How to 当 MainActivity 销毁后，A 也跟着销毁，否则 A 还在，太奇怪？  
-  MainActivity onDestroy 发送 event 到 A，A 接受后，销毁 A 自己。
-- A Activity (PIP)，A 执行 了 onPause， 不执行 onStop()，因为依然能被用户看到，但不能直接被用户操作。只能通过 在 A 上面添加的 PIP system 窗口（PipMenuActivity）操作。
+- Activity  
+  Started Activity by PIP mode activity， 在 PIP 窗口运行。即使 Started Activity 配置为不支持 PIP，只要是被 PIP mode activity 启动，也同样被动变成 PIP mode activity。
+
+  Stared new Activity is PIP or not PIP?  
+  Main -> A(PIP) -> B ? PIP or not PIP?
+
+```
+Intent intent = new Intent(X, BActivity.class)
+Y.startActivity(intent);
+```
+
+| X,Y        | B is in PIP or not |
+| ---------- | ------------------ |
+| A, A       | PIP                |
+| A, Main    | Not PIP            |
+| Main, Main | Not PIP            |
+| Main, A    | PIP                |
+
+结论：  
+ X 仅仅提供 package。  
+ Y 才是关键，Y 的 task stack ——> B 的 task stack ——> PIP or not
+
+```
+public Intent(Context packageContext, Class<?> cls) {
+    mComponent = new ComponentName(packageContext, cls);
+}
+
+public ComponentName(@NonNull Context pkg, @NonNull Class<?> cls) {
+    mPackage = pkg.getPackageName();
+    mClass = cls.getName();
+}
+```
+
+- Dialog  
+  Dialog of PIP mode activity， 在 PIP 窗口运行。  
+   After 点击 PIP 窗口 中的 dialog 中的按钮，实际上没有点击到。 两次点击后，extend PIP to normal。
+- Toast  
+  Toast of PIP mode activity，不受影响，默认出现在屏幕的正下方。
+- Back  
+  MainActivity -> A Activity (PIP). Back 时， A 不捕获，MainActivity 捕获，所以，MainActivity onDestroy(), A is still onPause，状态不变。
+
+- Swipe app from Recents  
+  MainActivity -> A Activity (PIP)。当用户 Swipe app from Recents，仅仅关闭 MainActivity，A PIP 还在。
+
+  Q: How to 当 MainActivity 销毁后，A 也跟着销毁，否则 A 还在，太奇怪？  
+   A : MainActivity onDestroy 发送 event 到 A，A 接受后，销毁 A 自己。
+
+- Lifecycle  
+  A Activity (PIP)，A 执行 了 onPause， 不执行 onStop()，因为依然能被用户看到，但不能直接被用户操作。只能通过 在 A 上面添加的 PIP system 窗口（PipMenuActivity）操作。

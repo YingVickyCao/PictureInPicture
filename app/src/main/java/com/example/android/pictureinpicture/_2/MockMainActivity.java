@@ -9,6 +9,8 @@ import androidx.annotation.Nullable;
 
 import com.example.android.pictureinpicture.R;
 
+import org.greenrobot.eventbus.EventBus;
+
 public class MockMainActivity extends Activity {
     private static final String TAG = MockMainActivity.class.getSimpleName();
 
@@ -18,11 +20,18 @@ public class MockMainActivity extends Activity {
 
         ActivityCache.getInstance().addActivity(this);
 
-        setContentView(R.layout.activity_first);
+        setContentView(R.layout.activity_mock_main);
 
         findViewById(R.id.showMoviePage).setOnClickListener(v -> showMoviePage());
-        findViewById(R.id.alertDialog).setOnClickListener(v -> alertDialog());
-        findViewById(R.id.toast).setOnClickListener(v -> toast());
+
+        findViewById(R.id.alertDialog_by_pip).setOnClickListener(v -> alertDialog_by_pip());
+        findViewById(R.id.alertDialog_by_not_pip).setOnClickListener(v -> alertDialog_by_not_pip());
+
+        findViewById(R.id.toast_by_pip).setOnClickListener(v -> toast_by_pip());
+        findViewById(R.id.toast_by_not_pip).setOnClickListener(v -> toast_by_not_pip());
+
+        findViewById(R.id.openBPage_by_pip).setOnClickListener(v -> openBPage_by_pip());
+        findViewById(R.id.openBPage_by_not_pip).setOnClickListener(v -> openBPage_by_not_pip());
     }
 
     private void showMoviePage() {
@@ -30,16 +39,55 @@ public class MockMainActivity extends Activity {
     }
 
     // 若 current activity is PIP,则Dialog 出现在 PIP 窗口中。
-    private void alertDialog() {
-//        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+    private void alertDialog_by_pip() {
+        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+        Test.showADialog(activity);
+    }
+
+    private void alertDialog_by_not_pip() {
         Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();
         Test.showADialog(activity);
     }
 
+
     // Toast 位置不受影响. 若 current activity is PIP,则Toast 默认出现在屏幕的正下方。
-    private void toast() {
+    private void toast_by_pip() {
         Activity activity = ActivityCache.getInstance().getCurrentActivity();
         Test.showToast(activity);
+    }
+
+    private void toast_by_not_pip() {
+        Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();
+        Test.showToast(activity);
+    }
+
+    public void openBPage_by_pip() {
+        // B is PIP
+//        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+//        Log.d(TAG, "openBPage_by_pip: " + activity.getClass().getSimpleName());
+//        Intent intent = new Intent(activity, BActivity.class); // activity = A
+//        activity.startActivity(intent); // start from activity = A
+
+        // B is  PIP
+        Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();
+        Log.d(TAG, "openBPage_by_not_pip: " + activity.getClass().getSimpleName());
+        Intent intent = new Intent(activity, BActivity.class); //activity = Main
+        Activity a = ActivityCache.getInstance().getCurrentActivity();
+        a.startActivity(intent); // start from activity = A
+    }
+
+    private void openBPage_by_not_pip() {
+        // B is Not PIP
+//        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+//        Log.d(TAG, "openBPage_by_pip: " + activity.getClass().getSimpleName());
+//        Intent intent = new Intent(activity, BActivity.class); // activity = A
+//        startActivity(intent); // start from activity = Main
+
+        // B is not PIP
+//        Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();
+//        Log.d(TAG, "openBPage_by_not_pip: " + activity.getClass().getSimpleName());
+//        Intent intent = new Intent(activity, BActivity.class); //activity = Main
+//        activity.startActivity(intent); // start from activity = Main
     }
 
     @Override
@@ -59,7 +107,6 @@ public class MockMainActivity extends Activity {
         Log.d(TAG, "onDestroy: ");
 
         ActivityCache.getInstance().removeActivity(this);
-
-        // TODO: 2020/3/26 send Event
+        EventBus.getDefault().post(new PrepareDestroyAppEvent());
     }
 }

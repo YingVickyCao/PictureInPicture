@@ -41,7 +41,7 @@ public class ActivityCache {
         }
 
         Activity tmp = null;
-        for (int i = mStack.size()-1; i >= 0; i--) {
+        for (int i = mStack.size() - 1; i >= 0; i--) {
             tmp = mStack.get(i);
             if (null != tmp && !tmp.isInPictureInPictureMode()) {
                 return tmp;
@@ -66,7 +66,7 @@ public class ActivityCache {
         mStack.remove(activity);
     }
 
-    public Activity isHaveActivity(Class activity) {
+    public Activity findActivity(Class activity) {
         if (isEmpty()) {
             return null;
         }
