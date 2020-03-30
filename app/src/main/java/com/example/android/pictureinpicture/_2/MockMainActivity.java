@@ -78,10 +78,10 @@ public class MockMainActivity extends Activity {
 
     private void openBPage_by_not_pip() {
         // B is Not PIP
-//        Activity activity = ActivityCache.getInstance().getCurrentActivity();
-//        Log.d(TAG, "openBPage_by_pip: " + activity.getClass().getSimpleName());
-//        Intent intent = new Intent(activity, BActivity.class); // activity = A
-//        startActivity(intent); // start from activity = Main
+        Activity activity = ActivityCache.getInstance().getCurrentActivity();
+        Log.d(TAG, "openBPage_by_pip: " + activity.getClass().getSimpleName());
+        Intent intent = new Intent(activity, BActivity.class); // activity = A
+        startActivity(intent); // start from activity = Main
 
         // B is not PIP
 //        Activity activity = ActivityCache.getInstance().getCurrentActivityNotPIP();

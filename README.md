@@ -491,7 +491,7 @@ Use bool flag to check if user had clicked PIP X.
   Started Activity by PIP mode activity， 在 PIP 窗口运行。即使 Started Activity 配置为不支持 PIP，只要是被 PIP mode activity 启动，也同样被动变成 PIP mode activity。
 
   Stared new Activity is PIP or not PIP?  
-  Main -> A(PIP) -> B ? PIP or not PIP?
+  Main -> A(PIP) -> B (config support or not support PIP)? PIP or not PIP?
 
 ```
 Intent intent = new Intent(X, BActivity.class)

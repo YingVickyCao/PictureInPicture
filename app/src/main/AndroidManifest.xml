@@ -44,11 +44,7 @@
             android:configChanges="screenSize|orientation|keyboardHidden|smallestScreenSize|screenLayout"
             android:supportsPictureInPicture="true" />
 
-        <activity
-            android:name="._2.BActivity"
-            android:autoRemoveFromRecents="true"
-            android:configChanges="screenSize|orientation|keyboardHidden|smallestScreenSize|screenLayout"
-            android:supportsPictureInPicture="true" />
+        <activity android:name="._2.BActivity" />
 
         <activity
             android:name="._origin.MainActivity"

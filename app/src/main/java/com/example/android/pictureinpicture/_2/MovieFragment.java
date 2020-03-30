@@ -290,7 +290,6 @@ public class MovieFragment extends Fragment implements IPip {
         return "InValid";
     }
 
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         if (hasFocus) {
