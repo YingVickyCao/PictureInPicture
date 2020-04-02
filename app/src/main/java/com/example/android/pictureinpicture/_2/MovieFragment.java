@@ -248,6 +248,7 @@ public class MovieFragment extends Fragment implements IPip {
     public void onStop() {
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
+        super.onStop();
         Log.e(TAG, "onStop: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
 
         mMovieView.pause();
@@ -256,7 +257,6 @@ public class MovieFragment extends Fragment implements IPip {
             unregisterReceiver();
         }
         mIsOnStopCalled = true;
-        super.onStop();
     }
 
     @Override
@@ -349,11 +349,6 @@ public class MovieFragment extends Fragment implements IPip {
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
         Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",orientation=" + printOrientation(getResources().getConfiguration().orientation) + ",screen=" + getString(R.string.screen));
-
-        if (!isSupportPIP()) {
-            return;
-        }
-
 //        if (isInPictureInPictureMode) {
 //            registerMediaReceiver();
 //        } else {
@@ -362,6 +357,7 @@ public class MovieFragment extends Fragment implements IPip {
         if (!isInPictureInPictureMode) {
             if (mIsOnStopCalled) {
                 if (null != getActivity()) {
+                    Log.d(TAG, "onPictureInPictureModeChanged:finish");
                     getActivity().finish();
                     return;
                 }
@@ -418,14 +414,14 @@ public class MovieFragment extends Fragment implements IPip {
         if (!checkIsUserAllowPIP()) {
             return false;
         }
-        return checkIsSystemSupportPUP();
+        return checkIsSystemSupportPIP();
     }
 
     private boolean checkIsApiSupport() {
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
     }
 
-    private boolean checkIsSystemSupportPUP() {
+    private boolean checkIsSystemSupportPIP() {
         // PIP might be disabled on devices that have low RAM.
         if (null == getActivity()) {
             return false;

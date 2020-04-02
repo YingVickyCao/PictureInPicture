@@ -17,10 +17,8 @@
 package com.example.android.pictureinpicture._2;
 
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,8 +28,6 @@ import androidx.fragment.app.Fragment;
 import com.example.android.pictureinpicture.R;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 public class MovieAActivity extends AppCompatActivity {
     private static final String TAG = MovieAActivity.class.getSimpleName();
@@ -40,30 +36,10 @@ public class MovieAActivity extends AppCompatActivity {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
-        EventBus.getDefault().register(this);
-        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-            @Override
-            public void onSystemUiVisibilityChange(int visibility) {
-                Log.d(TAG, "onSystemUiVisibilityChange:visibility=" + visibility);
-            }
-        });
-
-
-        getWindow().setNavigationBarColor(Color.TRANSPARENT);
+//        EventBus.getDefault().register(this);
         ActivityCache.getInstance().addActivity(this);
-
         setContentView(R.layout.activity_movie);
         getSupportFragmentManager().beginTransaction().replace(R.id.activity_main, new MovieFragment(), MovieFragment.TAG).commit();
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.activity_main);
-        if (fragment instanceof IPip) {
-            ((IPip) fragment).onRestart();
-        }
     }
 
     @Override
@@ -96,15 +72,16 @@ public class MovieAActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.e(TAG, "onDestroy: ");
-        EventBus.getDefault().unregister(this);
+//        EventBus.getDefault().unregister(this);
         ActivityCache.getInstance().removeActivity(this);
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onPrepareDestroyAppEvent(PrepareDestroyAppEvent event) {
-        Log.d(TAG, "PrepareDestroyAppEvent: ");
-        finish();
-    }
+//    @Subscribe(threadMode = ThreadMode.MAIN)
+//    public void onPrepareDestroyAppEvent(PrepareDestroyAppEvent event) {
+//        Log.d(TAG, "onPrepareDestroyAppEvent: ");
+//        finish();
+//        EventBus.getDefault().cancelEventDelivery(event);
+//    }
 
     @Override
     protected void onUserLeaveHint() {

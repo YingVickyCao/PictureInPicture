@@ -148,6 +148,8 @@ onPause: isInPictureInPictureMode=true
 onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=PORTRAIT,screen=large
 onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
 
+// In PIP, LANDSCAPE <-> PORTRAIT, no lifecycle called
+
 // Out PIP
 onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=normal-land
 onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT,screen=large
@@ -197,6 +199,7 @@ onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,scree
 onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=large-land
 onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
 
+// In PIP, LANDSCAPE <-> PORTRAIT, no lifecycle called
 
 // Out PIP
 onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=normal-land

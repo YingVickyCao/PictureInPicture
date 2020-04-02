@@ -9,8 +9,6 @@ import androidx.annotation.Nullable;
 
 import com.example.android.pictureinpicture.R;
 
-import org.greenrobot.eventbus.EventBus;
-
 public class MockMainActivity extends Activity {
     private static final String TAG = MockMainActivity.class.getSimpleName();
 
@@ -137,6 +135,7 @@ public class MockMainActivity extends Activity {
         Log.d(TAG, "onDestroy: ");
 
         ActivityCache.getInstance().removeActivity(this);
-        EventBus.getDefault().post(new PrepareDestroyAppEvent());
+        Log.d(TAG, "onDestroy: send PrepareDestroyAppEvent");
+//        EventBus.getDefault().post(new PrepareDestroyAppEvent());
     }
 }
