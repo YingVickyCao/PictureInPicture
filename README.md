@@ -338,10 +338,10 @@ public void onConfigurationChanged(Configuration newConfig) {
 }
 ```
 
-# 8 Q: When press Home or Recents, go to PIP mode?
+# 8 Q: When activity go to PIP mode?
 
-A:
-Way 1 : Press Home or Recents
+A:  
+Way 1 : when an activity is about to go into the background. (Depressed)
 
 ```java
 @Override
@@ -351,7 +351,29 @@ public void onUserLeaveHint() {
 }
 ```
 
-Way 2 : Only press Home
+```
+// Case 1 : Click page button ,then jump to other activity
+// Case 2 : Click System Back
+onResume
+onUserInteraction
+onUserInteraction
+onUserLeaveHint
+onPause
+
+
+// Case 3 : Press Home
+// Case 4 : Press Recents
+onResume
+onUserInteraction
+onUserLeaveHint
+onPause
+
+// Case 5: touch page
+// Case 6: swipe on page
+onUserInteraction
+```
+
+Way 2 : Press Home or Recents or Click button of pages
 
 ```
 // Use BroadcastReceiver

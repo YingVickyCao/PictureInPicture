@@ -225,6 +225,7 @@ public class MovieFragment extends Fragment implements IPip {
             registerMediaReceiver();
         }
         mIsOnStopCalled = false;
+        mMovieView.play();
     }
 
     @Override
@@ -232,9 +233,9 @@ public class MovieFragment extends Fragment implements IPip {
         super.onResume();
         Log.e(TAG, "onResume: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
 
-        if (getActivity().isInPictureInPictureMode()) {
-            minimize();
-        }
+//        if (getActivity().isInPictureInPictureMode()) {
+//            minimize();
+//        }
     }
 
     @Override
@@ -248,6 +249,7 @@ public class MovieFragment extends Fragment implements IPip {
         // On entering Picture-in-Picture mode, onPause is called, but not onStop.
         // For this reason, this is the place where we should pause the video playback.
         Log.e(TAG, "onStop: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
+
         mMovieView.pause();
 
         if (isSupportPIP()) {
