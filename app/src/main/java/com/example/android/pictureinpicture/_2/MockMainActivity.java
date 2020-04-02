@@ -17,7 +17,6 @@ public class MockMainActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         ActivityCache.getInstance().addActivity(this);
 
         setContentView(R.layout.activity_mock_main);

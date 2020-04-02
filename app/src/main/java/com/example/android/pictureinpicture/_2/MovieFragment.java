@@ -271,12 +271,6 @@ public class MovieFragment extends Fragment implements IPip {
         Log.e(TAG, "onDestroy: isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode());
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",orientation=" + printOrientation(newConfig.orientation));
-        adjustFullScreen(newConfig);
-    }
 
     private String printOrientation(int orientation) {
         switch (orientation) {
@@ -345,9 +339,16 @@ public class MovieFragment extends Fragment implements IPip {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigurationChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",orientation=" + printOrientation(newConfig.orientation) + ",screen=" + getString(R.string.screen));
+        adjustFullScreen(newConfig);
+    }
+
+    @Override
     public void onPictureInPictureModeChanged(boolean isInPictureInPictureMode) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode);
-        Log.d(TAG, "onPictureInPictureModeChanged: isInPictureInPictureMode=" + isInPictureInPictureMode + ",screen=" + getString(R.string.screen));
+        Log.d(TAG, "onPictureInPictureModeChanged:isInPictureInPictureMode=" + getActivity().isInPictureInPictureMode() + ",orientation=" + printOrientation(getResources().getConfiguration().orientation) + ",screen=" + getString(R.string.screen));
 
         if (!isSupportPIP()) {
             return;
@@ -494,13 +495,18 @@ public class MovieFragment extends Fragment implements IPip {
     private void adjustFullScreen(Configuration config) {
         final View decorView = getActivity().getWindow().getDecorView();
         if (config.orientation == ORIENTATION_LANDSCAPE) {
-//            Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
-            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+            Log.d(TAG, "adjustFullScreen: ORIENTATION_LANDSCAPE");
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN);
             mScrollView.setVisibility(View.GONE);
             mCloseBtn.setVisibility(View.GONE);
             mMovieView.setAdjustViewBounds(false);
         } else {
-//            Log.d(TAG, "adjustFullScreen: ORIENTATION_PORTRAIT");
+            Log.d(TAG, "adjustFullScreen: ORIENTATION_PORTRAIT");
             decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
             mScrollView.setVisibility(View.VISIBLE);
             mCloseBtn.setVisibility(View.VISIBLE);

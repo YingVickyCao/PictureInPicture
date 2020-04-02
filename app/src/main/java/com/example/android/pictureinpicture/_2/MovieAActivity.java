@@ -17,8 +17,10 @@
 package com.example.android.pictureinpicture._2;
 
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,8 +41,15 @@ public class MovieAActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
         EventBus.getDefault().register(this);
+        getWindow().getDecorView().setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+            @Override
+            public void onSystemUiVisibilityChange(int visibility) {
+                Log.d(TAG, "onSystemUiVisibilityChange:visibility=" + visibility);
+            }
+        });
 
 
+        getWindow().setNavigationBarColor(Color.TRANSPARENT);
         ActivityCache.getInstance().addActivity(this);
 
         setContentView(R.layout.activity_movie);

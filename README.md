@@ -144,27 +144,27 @@ onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
 // Enter PIP (Press Home/Recent)
 onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
 minimize:
-onUserLeaveHint:
 onPause: isInPictureInPictureMode=true
-onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=PORTRAIT,screen=large
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
 
 // Out PIP
-onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
-onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
+onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=normal-land
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT,screen=large
 onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
 onResume: isInPictureInPictureMode=false
+
 
 // Enter PIP (Click button)
 minimize:
 onPause: isInPictureInPictureMode=true
-onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=PORTRAIT,screen=large
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
 
 // In PIP, click X
 onConfigurationChanged:isInPictureInPictureMode=false,orientation=PORTRAIT
 onStop: isInPictureInPictureMode=false
-onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=large
+onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=PORTRAIT,screen=large
 
 // Pickup activity from Recents
 onRestart: isInPictureInPictureMode=false

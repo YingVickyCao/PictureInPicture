@@ -328,8 +328,10 @@ public class MovieView extends RelativeLayout {
         }
         mAdjustViewBounds = adjustViewBounds;
         if (adjustViewBounds) {
+            Log.d(TAG, "setAdjustViewBounds: null");
             setBackground(null);
         } else {
+            Log.d(TAG, "setAdjustViewBounds: BLACK");
             setBackgroundColor(Color.BLACK);
         }
         requestLayout();
