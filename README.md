@@ -136,7 +136,7 @@ onDestroy: isInPictureInPictureMode=false
 ```
 MovieFragment.java, Tablet is portrait
 
-onCreateView: isInPictureInPictureMode=false
+onCreateView: isInPictureInPictureMode=false,screen=large
 onStart: isInPictureInPictureMode=false
 onResume: isInPictureInPictureMode=false
 onWindowFocusChanged: hasFocus=true,orientation=PORTRAIT
@@ -184,7 +184,7 @@ onDestroy: isInPictureInPictureMode=false
 ```
 MovieFragment.java, Tablet is landcape
 
-onCreateView: isInPictureInPictureMode=false
+onCreateView: isInPictureInPictureMode=false,screen=large-land
 onStart: isInPictureInPictureMode=false
 onResume: isInPictureInPictureMode=false
 onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
@@ -193,28 +193,30 @@ onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
 onReceive: action=android.intent.action.CLOSE_SYSTEM_DIALOGS,reason=homekey
 minimize:
 onPause: isInPictureInPictureMode=true
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
-onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large-land
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=large-land
+onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=large-land
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
+
 
 // Out PIP
-onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=normal
-onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
-onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=normal-land
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=large-land
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=large-land
 onWindowFocusChanged: hasFocus=true,orientation=LANDSCAPE
 onResume: isInPictureInPictureMode=false
 
 // Enter PIP (Click button)
 minimize:
 onPause: isInPictureInPictureMode=true
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
-onPictureInPictureModeChanged: isInPictureInPictureMode=true,screen=large-land
-onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=large-land
+onPictureInPictureModeChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=large-land
+onConfigurationChanged:isInPictureInPictureMode=true,orientation=LANDSCAPE,screen=normal-land
 
 // In PIP, click X
-onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE
+onConfigurationChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=large-land
 onStop: isInPictureInPictureMode=false
-onPictureInPictureModeChanged: isInPictureInPictureMode=false,screen=large-land
+onPictureInPictureModeChanged:isInPictureInPictureMode=false,orientation=LANDSCAPE,screen=large-land
+
 
 // Pickup activity from Recents
 onRestart: isInPictureInPictureMode=false
